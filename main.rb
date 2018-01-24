@@ -11,14 +11,13 @@ class MiddleManager
       user:                  'root',
       pass:                  'cloudera',
       hosts:                 [
-        'jmichaels-mgmt-1.gce.cloudera.com',
-        'jmichaels-mgmt-2.gce.cloudera.com',
-        'jmichaels-mgmt-3.gce.cloudera.com',
-        'jmichaels-mgmt-4.gce.cloudera.com',
-        'jmichaels-mgmt-5.gce.cloudera.com',
+        'jmichaels-mmm-1.gce.cloudera.com',
+        'jmichaels-mmm-2.gce.cloudera.com',
+        'jmichaels-mmm-3.gce.cloudera.com',
+        'jmichaels-mmm-4.gce.cloudera.com',
+        'jmichaels-mmm-5.gce.cloudera.com',
       ],
       mysql_root_pass:       'VaT990mLJj',
-      #mysql_slave_root_pass: '7r2gXNVS0R',
       mysql_slave_user_pass: 'r47XkHCgpn',
       mysql_cm_dbs_password: 'h1TqkGM3TH'
     })
@@ -52,22 +51,26 @@ class MiddleManager
     puts "Moving on to first node, #{first_node}"
 
     ssh = Net::SSH.start(first_node, @conf.user, password: @conf.password)
-    deploy_mysql_my_cnf(ssh, first_node, 'master')
     install_maria_db(ssh, first_node)
+    deploy_mysql_my_cnf(ssh, first_node, 'master')
     install_jdk(ssh, first_node)
+    install_jdbc_driver(ssh, first_node)
     mysql_secure_installation(ssh, first_node)
     setup_cm_dbs(ssh, first_node)
 
     puts "Configuring second node, #{second_node}"
 
     ssh = Net::SSH.start(second_node, @conf.user, password: @conf.password)
-    deploy_mysql_my_cnf(ssh, second_node, 'slave')
     install_maria_db(ssh, second_node)
+    deploy_mysql_my_cnf(ssh, second_node, 'slave')
     mysql_secure_installation(ssh, second_node)
 
     mysql_replication_setup(first_node, second_node)
 
+    ssh = Net::SSH.start(first_node, @conf.user, password: @conf.password)
     install_cloudera_manager(ssh, first_node)
+
+    puts "Server is running: http://#{@conf.hosts.first}:7180"
   end
 
   def set_swappiness(ssh, host)
@@ -234,23 +237,51 @@ class MiddleManager
                 "/etc/profile.d/java.sh",
                 :ssh => { :password => @conf.password })
 
+    ssh.exec!("chmod 744 /etc/profile.d/java.sh")
+    ssh.exec!("source /etc/profile.d/java.sh")
+
     puts "Installing JDK 8 RPM"
     puts ssh.exec!("yum localinstall -y /tmp/jdk-8u161-linux-x64.rpm")
   end
 
-  def setup_cm_dbs(ssh, host)
+  def install_jdbc_driver(ssh, host)
+    if ssh.exec!("ls /usr/share/java") =~ /mysql-connector-java\.jar/
+      puts "JDBC drive already installed"
+      return
+    end
 
-    ssh.exec!("mysql -e \"CREATE DATABASE cmserver DEFAULT CHARACTER SET utf8;\"")
-    ssh.exec!("mysql -e \"GRANT ALL on cmserver.* TO 'cmserveruser'@'%' IDENTIFIED BY '#{@conf.cm_dbs_password}';\"")
+    puts "Installing JDBC driver - mysql-connector-java-5.1.45-bin.jar - in /usr/share/java"
+    
+    puts "Downloading JDBC driver"
+    puts ssh.exec!("wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.45.tar.gz")
+    puts ssh.exec!("tar -xzf mysql-connector-java-5.1.45.tar.gz")
+
+    puts "Moving and renaming JDBC driver"
+    puts ssh.exec!("mkdir /usr/share/java")
+    puts ssh.exec!("mv mysql-connector-java-5.1.45/mysql-connector-java-5.1.45-bin.jar /usr/share/java/mysql-connector-java.jar")
+    puts ssh.exec!("rm -rf mysql-connector-java-5.1.45*")
+  end
+
+  def setup_cm_dbs(ssh, host)
+    puts "Creating databases/users for Cloudera Manager"
+    ['cmserver', 'hive', 'amon', 'rman', 'oozie', 'hue'].each do |db_name|
+      puts "Creating #{db_name} database and #{db_name}_user user."
+
+      ssh.exec!("mysql -e \"CREATE DATABASE #{db_name} DEFAULT CHARACTER SET utf8;\"")
+      ssh.exec!("mysql -e \"DROP USER IF EXISTS '#{db_name}_user'@'%';\"")
+      ssh.exec!("mysql -e \"GRANT ALL on #{db_name}.* TO '#{db_name}_user'@'%' IDENTIFIED BY '#{@conf.mysql_cm_dbs_password}';\"")
+    end
   end
 
   def install_cloudera_manager(ssh, host)
-    ssh.exec!("yum-config-manager --add-repo https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo")
-    ssh.exec!("yum install -y cloudera-manager-daemons")
-    ssh.exec!("yum install -y cloudera-manager-server")
+    puts ssh.exec!("yum install -y yum-utils")
+    puts ssh.exec!("yum-config-manager --add-repo https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo")
+    puts "Installing cloudera-manager-daemons"
+    puts ssh.exec!("yum install -y cloudera-manager-daemons")
+    puts ssh.exec!("yum install -y cloudera-manager-server")
 
     puts "Verifying Cloudera Manager databases are configured properly"
-    puts ssh.exec!("/usr/share/cmf/schema/scm_prepare_database.sh mysql cmserver cmserveruser password")
+    puts ssh.exec!("/usr/share/cmf/schema/scm_prepare_database.sh mysql cmserver cmserver_user #{@conf.mysql_cm_dbs_password}")
 
     puts "Starting cloudera-scm-server"
     puts ssh.exec!("systemctl start cloudera-scm-server")
@@ -261,4 +292,3 @@ mm = MiddleManager.new
 
 #mm.test_connection
 mm.run
-#mm.mysql_replication_setup(mm.conf.hosts[0], mm.conf.hosts[1])
