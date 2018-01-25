@@ -42,10 +42,10 @@ class MiddleManager
     hosts.each do |host|
       puts "Configuring:  #{host}"
       ssh = Net::SSH.start(host, @conf.user, password: @conf.password)
-      #set_swappiness(ssh, host)
-      #disable_transparent_hugepage(ssh, host)
-      #ensure_nscd_running(ssh, host)
-      #ensure_ntpd_running(ssh, host)
+      set_swappiness(ssh, host)
+      disable_transparent_hugepage(ssh, host)
+      ensure_nscd_running(ssh, host)
+      ensure_ntpd_running(ssh, host)
     end
 
     puts "Moving on to first node, #{first_node}"
