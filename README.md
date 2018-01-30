@@ -42,3 +42,5 @@ Ruby script for preparing a Hadoop cluster and installing Cloudera Manager on Ce
     - Ask which host you want to install CM on
     - Asks if you want to do MySQL replication
       - if yes Asks which server to install it on
+- Look into running commands asynchronously, to speed up the process
+  - Each server setup should be able to execute independently

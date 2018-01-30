@@ -16,7 +16,8 @@ class MiddleManager
       mysql_cm_dbs_password:    'h1TqkGM3TH',
       cloudera_manager_host:    'jmichaels-1.gce.cloudera.com',
       mysql_replication_host:   nil,
-      jdk_rpm_path:             './jdks/jdk-8u161-linux-x64.rpm'
+      jdk_rpm_path:             './jdks/jdk-8u161-linux-x64.rpm',
+      debug_mode:               true
     })
 
     @ssh_connection = nil
@@ -28,7 +29,7 @@ class MiddleManager
     puts "Testing connection to hosts"
 
     @conf.hosts.each do |host|
-      puts "Testing connection: ssh#{@conf.user}@#{host}"
+      puts "Testing connection: ssh #{@conf.user}@#{host}"
       @ssh_connection = Net::SSH.start(host, @conf.user, password: @conf.password)
       result = x "hostname"
       raise "Could not connect to #{host}" unless result =~ /#{host}/
@@ -49,6 +50,7 @@ class MiddleManager
       ensure_ntpd_running
       install_jdbc_driver
       install_jdk
+      install_nmon
 
       if @host == @conf.cloudera_manager_host
         install_maria_db
@@ -160,25 +162,33 @@ class MiddleManager
   def mysql_secure_installation
     puts "Securing MySQL installation"
 
-    # Make sure that NOBODY can access the server without a password
-    x "mysql -e \"UPDATE mysql.user SET Password = PASSWORD('#{@conf.mysql_root_pass}') WHERE User = 'root'\""
-    # Kill the anonymous users
-    x "mysql -e \"DROP USER ''@'localhost'\""
-    # Because our hostname varies we'll use some Bash magic here.
-    x "mysql -e \"DROP USER ''@'$(hostname)'\""
-    # Kill off the demo database
-    x "mysql -e \"DROP DATABASE test\""
-    # Make our changes take effect
-    x "mysql -e \"FLUSH PRIVILEGES\""
+    # Set root password
+    mysql "UPDATE mysql.user SET Password = PASSWORD('#{@conf.mysql_root_pass}') WHERE User = 'root'"
 
+    # Remove anonymous users
+    mysql "DROP USER ''@'localhost'"
+
+    # Because our hostname varies we'll use some Bash magic here.
+    mysql "DROP USER ''@'$(hostname)'"
+
+    # Remove the test database
+    mysql "DROP DATABASE test"
+
+    # Make our changes take effect
+    mysql "FLUSH PRIVILEGES"
+
+    # Automate mysql logins for the root user via ~/.my.cnf file
     x "echo [client] > ~/.my.cnf"
     x "echo user=root >> ~/.my.cnf"
     x "echo pass=#{@conf.mysql_root_pass} >> ~/.my.cnf"
+
+    # Lock it down, only root should see this file
+    x "chmod 600 ~/.my.cnf"
   end
 
   def mysql_replication_setup(master_host, slave_host)
     @ssh_connection = Net::SSH.start(slave_host, @conf.user, password: @conf.password)
-    if x("mysql -e \"SHOW SLAVE STATUS\\G\"") =~ /Waiting for master to send event/
+    if mysql("SHOW SLAVE STATUS\\G") =~ /Waiting for master to send event/
       puts "MySQL replication is already working"
       return
     end
@@ -187,9 +197,9 @@ class MiddleManager
 
     puts "Creating slave user"
     @ssh_connection = Net::SSH.start(master_host, @conf.user, password: @conf.password)
-    x "mysql -e \"GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'%' IDENTIFIED BY '#{@conf.mysql_slave_user_pass}';\""
-    x "mysql -e \"SET GLOBAL binlog_format = 'ROW';\""
-    x "mysql -e \"FLUSH TABLES WITH READ LOCK;\""
+    mysql "GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'%' IDENTIFIED BY '#{@conf.mysql_slave_user_pass}';"
+    mysql "SET GLOBAL binlog_format = 'ROW';"
+    mysql "FLUSH TABLES WITH READ LOCK;"
     master_status = x "mysql -e \"SHOW MASTER STATUS;\""
 
     # master_status looks like:
@@ -201,9 +211,9 @@ class MiddleManager
 
     puts "Configuring slave"
     @ssh = Net::SSH.start(slave_host, @conf.user, password: @conf.password)
-    x "mysql -e \"CHANGE MASTER TO MASTER_HOST='#{master_host}', MASTER_USER='slave_user', MASTER_PASSWORD='#{@conf.mysql_slave_user_pass}', MASTER_LOG_FILE='#{master_log_file}', MASTER_LOG_POS=#{master_log_pos};\""
-    x "mysql -e \"START SLAVE;\""
-    x "mysql -e \"SHOW SLAVE STATUS\\G\""
+    mysql "CHANGE MASTER TO MASTER_HOST='#{master_host}', MASTER_USER='slave_user', MASTER_PASSWORD='#{@conf.mysql_slave_user_pass}', MASTER_LOG_FILE='#{master_log_file}', MASTER_LOG_POS=#{master_log_pos};"
+    mysql "START SLAVE;"
+    mysql "SHOW SLAVE STATUS\\G"
 
     puts "MySQL replication setup complete"
   end
@@ -224,13 +234,24 @@ class MiddleManager
                 :ssh => { :password => @conf.password })
 
     puts "Deploying /etc/profile.d/java.sh"
-    scp("./files/java.sh", "/etc/profile.d/java.sh", @host)
+    scp("./files/java.sh", "/etc/profile.d/java.sh")
 
     x "chmod 744 /etc/profile.d/java.sh"
     x "source /etc/profile.d/java.sh"
 
     puts "Installing JDK 8 RPM"
     x "yum localinstall -y /tmp/jdk-8u161-linux-x64.rpm"
+  end
+
+  def install_nmon
+    if x("yum list installed | grep nmon") =~ /nmon/
+      puts "nmon already installed"
+      return
+    end
+
+    puts "Installing nmon"
+
+    x "yum install -y nmon"
   end
 
   def install_jdbc_driver
@@ -256,9 +277,9 @@ class MiddleManager
     ['cmserver', 'hive', 'amon', 'rman', 'oozie', 'hue'].each do |db_name|
       puts "Creating #{db_name} database and #{db_name}_user user."
 
-      x "mysql -e \"CREATE DATABASE #{db_name} DEFAULT CHARACTER SET utf8;\""
-      x "mysql -e \"DROP USER IF EXISTS '#{db_name}_user'@'%';\""
-      x "mysql -e \"GRANT ALL on #{db_name}.* TO '#{db_name}_user'@'%' IDENTIFIED BY '#{@conf.mysql_cm_dbs_password}';\""
+      mysql "CREATE DATABASE #{db_name} DEFAULT CHARACTER SET utf8;"
+      mysql "DROP USER IF EXISTS '#{db_name}_user'@'%';"
+      mysql "GRANT ALL on #{db_name}.* TO '#{db_name}_user'@'%' IDENTIFIED BY '#{@conf.mysql_cm_dbs_password}';"
     end
   end
 
@@ -276,12 +297,13 @@ class MiddleManager
     x "systemctl start cloudera-scm-server"
   end
 
-  def x(cmd, verbose=false)
+  def x(cmd, verbose=@conf.debug_mode)
     start_time = Time.now
     puts "BEGIN: #{cmd}"
 
     if verbose
-      result = puts @ssh_connection.exec!(cmd)
+      result = @ssh_connection.exec!(cmd)
+      puts result
     else
       result = @ssh_connection.exec!(cmd)
     end
@@ -299,6 +321,13 @@ class MiddleManager
                     file_to_copy_path,
                     destination_path,
                     :ssh => { :password => @conf.password })
+  end
+
+  def upload(file_to_copy_path, destination_path)
+  end
+
+  def mysql(cmd)
+    x "mysql -e \"#{cmd}\""
   end
 end
 
