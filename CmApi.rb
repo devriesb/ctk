@@ -1,9 +1,12 @@
 class CmApi
-  def initialize(user, password, host, port)
-    @port ||= '7180'
-    @user = user
-    @password = password
-    @host = host
+  def initialize(config)
+    @conf = config
+  end
+
+  def export_cluster_template
+  end
+
+  def import_cluster_template
   end
 
   def deployment

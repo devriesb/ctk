@@ -1,2 +1,4 @@
 .DS_Store
 jdks/
+servers.yml
+config.rb
