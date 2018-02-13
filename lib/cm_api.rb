@@ -1,8 +1,4 @@
 class CmApi
-  def initialize(config)
-    @conf = config
-  end
-
   def export_cluster_template
   end
 
@@ -10,6 +6,5 @@ class CmApi
   end
 
   def deployment
-    
   end
 end

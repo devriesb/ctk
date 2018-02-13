@@ -1,2 +1,0 @@
-class MysqlReplicationConfigurer
-end

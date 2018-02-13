@@ -15,11 +15,27 @@ class Service
   end
 
   def start
-    server.run("systemctl start #{name}")
+    res = server.run("systemctl start #{name}")
+
+    if res.strip.length > 0
+      puts "Error: \n"
+      puts res.inspect
+      raise "#{name} start failed on #{server.hostname}"
+    end
+
+    res
   end
 
   def restart
-    server.run("systemctl restart #{name}")
+    res = server.run("systemctl restart #{name}")
+
+    if res.strip.length > 0
+      puts "Error: \n"
+      puts res.inspect
+      raise "#{name} restart failed on #{server.hostname}"
+    end
+
+    res
   end
 
   def enable
