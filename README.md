@@ -38,7 +38,7 @@ s.map(&:hostname)
 s.first.service('mariadb').status
 s.first.service('sshd').status
 s.first.install('mariadb-server')
-Server.all.each{ |s| s.service('ntpd').start_and_enable
+Server.all.each{ |s| s.service('ntpd').start_and_enable }
 cm = Server.find('cm')
 cm.service('cloudera-scm-server').status
 
