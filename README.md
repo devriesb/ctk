@@ -1,25 +1,63 @@
-# BEFORE GITHUB
-- Delete git history
-- Delete passwords
-- Delete server names
-
 # Middle Manager
 
 ## What is Does:
 
 Ruby script for preparing a Hadoop cluster and installing Cloudera Manager on CentOS 7.4 servers
 
+## What it can do:
+
+### Build out a hadoop cluster from scratch with Cloudera Manager installed:
+
+```bash
+
+# Create the real config file
+cp config.example.rb config.rb
+
+# Edit it, adding the hostnames of your cluster servers and ssh credentials
+vim config.rb
+
+# Let it rip!
+./install.rb
+``` 
+
+### Launch an interactive shell for managing your cluster
+
+```bash
+
+cd workspace/middle_manager
+./shell.sh
+
+```
+
+```ruby
+
+s = Server.all
+s.count
+s.first
+s.map(&:hostname)
+s.first.service('mariadb').status
+s.first.service('sshd').status
+s.first.install('mariadb-server')
+Server.all.each{ |s| s.service('ntpd').start_and_enable
+cm = Server.find('cm')
+cm.service('cloudera-scm-server').status
+
+```
+
 ## How to Install:
 
 - curl -sSL https://get.rvm.io | bash -s stable
 - rvm install ruby 2.3.0
-- gem install net-ssh
-- gem install net-scp
-- download jdk-8u161-linux-x64.rpm from Oracle and put it in jdks/ directory
+- gem install bundler
+- bundle install
 
 ## How to Run It:
 
 - `./run.sh`
+
+## Warnings
+
+- Oracle frequently changes the link to the Java 8 JDK download, you may have to update it in the config file
 
 ## TODO:
 
