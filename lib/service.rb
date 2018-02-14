@@ -1,45 +1,45 @@
 class Service
-  attr_reader :name, :server
+  attr_reader :name, :box
 
-  def initialize(name, server)
+  def initialize(name, box)
     @name = name
-    @server = server
+    @box = box
   end
 
   def status
-    server.run("systemctl status #{name}")
+    box.cmd("systemctl status #{name}")
   end
 
   def stop
-    server.run("systemctl stop #{name}")
+    box.cmd("systemctl stop #{name}")
   end
 
   def start
-    res = server.run("systemctl start #{name}")
+    res = box.cmd("systemctl start #{name}")
 
     if res.strip.length > 0
       puts "Error: \n"
       puts res.inspect
-      raise "#{name} start failed on #{server.hostname}"
+      raise "#{name} start failed on #{box.hostname}"
     end
 
     res
   end
 
   def restart
-    res = server.run("systemctl restart #{name}")
+    res = box.cmd("systemctl restart #{name}")
 
     if res.strip.length > 0
       puts "Error: \n"
       puts res.inspect
-      raise "#{name} restart failed on #{server.hostname}"
+      raise "#{name} restart failed on #{box.hostname}"
     end
 
     res
   end
 
   def enable
-    server.run("systemctl enable #{name}")
+    box.cmd("systemctl enable #{name}")
   end
 
   def start_and_enable

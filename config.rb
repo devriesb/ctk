@@ -4,7 +4,7 @@ class Config
 
     conf.user                   = 'root'
     conf.pass                   = 'cloudera'
-    conf.hostnames              = (1..5).map{ |n| "jmichaels2-#{n}.gce.cloudera.com"}
+    conf.hostnames              = (1..5).map{ |n| "jmichaels-#{n}.gce.cloudera.com"}
     conf.mysql_root_pass        = 'VaT990mLJj'
     conf.mysql_slave_user_pass  = 'r47XkHCgpn'
     conf.mysql_cm_dbs_password  = 'h1TqkGM3TH'

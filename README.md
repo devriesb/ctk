@@ -2,7 +2,7 @@
 
 ## What is Does:
 
-Ruby script for preparing a Hadoop cluster and installing Cloudera Manager on CentOS 7.4 servers
+Ruby script for preparing a Hadoop cluster and installing Cloudera Manager on CentOS 7.4 boxes
 
 ## What it can do:
 
@@ -13,7 +13,7 @@ Ruby script for preparing a Hadoop cluster and installing Cloudera Manager on Ce
 # Create the real config file
 cp config.example.rb config.rb
 
-# Edit it, adding the hostnames of your cluster servers and ssh credentials
+# Edit it, adding the hostnames of your cluster boxes and ssh credentials
 vim config.rb
 
 # Let it rip!
@@ -31,15 +31,15 @@ cd workspace/middle_manager
 
 ```ruby
 
-s = Server.all
+s = Box.all
 s.count
 s.first
 s.map(&:hostname)
 s.first.service('mariadb').status
 s.first.service('sshd').status
 s.first.install('mariadb-server')
-Server.all.each{ |s| s.service('ntpd').start_and_enable }
-cm = Server.find('cm')
+Box.all.each{ |s| s.service('ntpd').start_and_enable }
+cm = Box.find('cm')
 cm.service('cloudera-scm-server').status
 
 ```
@@ -53,7 +53,8 @@ cm.service('cloudera-scm-server').status
 
 ## How to Run It:
 
-- `./run.sh`
+- `./install.sh`
+- `./shell.sh`
 
 ## Warnings
 
@@ -64,8 +65,8 @@ cm.service('cloudera-scm-server').status
 - Dedicated config class which does not get committed to git, example config class which does
 - Better logging - 'do' method which logs the command being run, says when it starts, when it ends 
   - should accept the 'ssh' object/connection
-- Deploy JDK to all servers, by scping it from the first server
-- Look at # of hosts, and setup servers differently, based on how the roles will be distributed
+- Deploy JDK to all boxes, by scping it from the first box
+- Look at # of hosts, and setup boxes differently, based on how the roles will be distributed
   - i.e. if 5 hosts, assume 1 master, 1 utility/edge, and 3 workers
     - if 10, spread them out more
     - Etc...
@@ -79,6 +80,7 @@ cm.service('cloudera-scm-server').status
     - Asks for host name / pattern
     - Ask which host you want to install CM on
     - Asks if you want to do MySQL replication
-      - if yes Asks which server to install it on
+      - if yes Asks which box to install it on
 - Look into running commands asynchronously, to speed up the process
-  - Each server setup should be able to execute independently
+  - Each box setup should be able to execute independently
+- Logo:  Something like this, but holding a ruby in trunk   https://www.google.com/search?q=elephant+face+drawing&source=lnms&tbm=isch&sa=X&ved=0ahUKEwic74_Z-qXZAhVJ8IMKHWZODvUQ_AUICigB&biw=1680&bih=930#imgrc=8wEvwIiMycWciM:
