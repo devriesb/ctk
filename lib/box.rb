@@ -7,6 +7,7 @@ class Box
     @password = password ? password : $conf.pass
 
     @ssh_connection = Net::SSH.start(@hostname, @user, password: @password)
+    @logger = Logger.new("#{$app_directory}/log/#{hostname}")
   end
 
   def self.all
@@ -27,28 +28,30 @@ class Box
 
   def cmd(command, verbose=$conf.debug_mode)
     start_time = Time.now
-    puts "BEGIN: #{command}"
+    log "BEGIN: #{command}"
 
     if verbose
       result = @ssh_connection.exec!(command)
-      puts result
+      log result
     else
       result = @ssh_connection.exec!(command)
     end
 
     end_time = Time.now
     duration = end_time - start_time
-    puts "END (#{duration}s) \n\n"
+    log "END (#{duration}s) \n\n"
 
     result
   end
 
   def scp(file_to_copy_path, destination_path)
+    log "Copying #{file_to_copy_path} to #{destination_path}"
     Net::SCP.upload!(@hostname,
                     $conf.user,
                     file_to_copy_path,
                     destination_path,
-                    :ssh => { :password => $conf.password })
+                    :ssh => { :password => $conf.password },
+                    recursive: true)
   end
 
   def mysql(query)
@@ -57,14 +60,14 @@ class Box
 
   def install(package_name, service_name=nil)
     # TODO - Check for errors, store in var, report at end of run
-    puts "Checking if #{package_name} is installed"
+    log "Checking if #{package_name} is installed"
 
     if (cmd "rpm -q #{package_name}") =~ /is not installed/
-      puts "Installing #{package_name}"
+      log "Installing #{package_name}"
 
       cmd "yum install -y #{package_name}"
 
-      puts "#{package_name} installation complete"
+      log "#{package_name} installation complete"
 
       if service_name
         service(service_name).start_and_enable
@@ -75,7 +78,7 @@ class Box
 
       return true
     else
-      puts "#{package_name} is already installed"
+      log "#{package_name} is already installed"
       return false
     end
   end
@@ -85,7 +88,7 @@ class Box
   end
 
   def set_swappiness(amount=1)
-    puts "Setting 'swappiness' to #{amount}."
+    log "Setting 'swappiness' to #{amount}."
     cmd "sh -c 'echo #{amount} > /proc/sys/vm/swappiness'"
   end
 
@@ -94,37 +97,37 @@ class Box
     thp_res        = cmd "cat /sys/kernel/mm/transparent_hugepage/enabled"
 
     if thp_res =~ /\[never\]/ && thp_defrag_res =~ /\[never\]/
-      puts "transparent_hugepage already disabled"
+      log "transparent_hugepage already disabled"
     else
-      puts "Disabling transparent_hugepage"
+      log "Disabling transparent_hugepage"
       cmd "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
       cmd "echo never > /sys/kernel/mm/transparent_hugepage/defrag"
 
-      puts "Modifying /etc/rc.d/rc.local to disable transparent_hugepage on startup"
+      log "Modifying /etc/rc.d/rc.local to disable transparent_hugepage on startup"
       rc_local_file = cmd "cat /etc/rc.d/rc.local"
 
       unless rc_local_file =~ /\/sys\/kernel\/mm\/transparent_hugepage\/defrag/
-        puts "Adding 'echo never > /sys/kernel/mm/transparent_hugepage/defrag'"
+        log "Adding 'echo never > /sys/kernel/mm/transparent_hugepage/defrag'"
         cmd "echo 'echo never > /sys/kernel/mm/transparent_hugepage/defrag' >> /etc/rc.d/rc.local"
       end
 
       unless rc_local_file =~ /\/sys\/kernel\/mm\/transparent_hugepage\/enabled/
-        puts "Adding 'echo never > /sys/kernel/mm/transparent_hugepage/enabled'"
+        log "Adding 'echo never > /sys/kernel/mm/transparent_hugepage/enabled'"
         cmd "echo 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' >> /etc/rc.d/rc.local"
       end
 
-      puts "Ensuring /etc/rc.d/rc.local is executable"
+      log "Ensuring /etc/rc.d/rc.local is executable"
       cmd "chmod +x /etc/rc.d/rc.local"
     end
   end
 
   def deploy_mysql_my_cnf(master_or_slave)
     if cmd("cat /etc/my.cnf") =~ /MiddleManager/
-      puts "/etc/my.cnf already deployed"
+      log "/etc/my.cnf already deployed"
     else
-      puts "Deploying /etc/my.cnf"
+      log "Deploying /etc/my.cnf"
       scp("./files/mysql_#{master_or_slave}_config.my.cnf", "/etc/my.cnf")
-      puts "Removing /var/lib/mysql/ib_logfile*"
+      log "Removing /var/lib/mysql/ib_logfile*"
       cmd "rm -f /var/lib/mysql/ib_logfile*"
       service('mariadb').restart
     end
@@ -132,39 +135,39 @@ class Box
 
   def install_jdk
     if cmd("yum list installed | grep jdk") =~ /jdk1\.8/
-      puts "JDK for Java 8 already installed"
+      log "JDK for Java 8 already installed"
       return
     end
 
-    puts "Installing JDK for Java 8"
+    log "Installing JDK for Java 8"
 
     # XXX - Oracle likes to change the link to their JDK downloads.  If needed, get the new one from this page:
     # http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
     cmd 'cd /tmp; curl -L -b "oraclelicense=a" http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm -O'
 
-    puts "Deploying /etc/profile.d/java.sh"
+    log "Deploying /etc/profile.d/java.sh"
     scp("./files/java.sh", "/etc/profile.d/java.sh")
 
     cmd "chmod 744 /etc/profile.d/java.sh"
     cmd "source /etc/profile.d/java.sh"
 
-    puts "Installing JDK 8 RPM"
+    log "Installing JDK 8 RPM"
     cmd "yum localinstall -y /tmp/jdk-8u161-linux-x64.rpm"
   end
 
   def install_jdbc_driver
     if cmd("ls /usr/share/java") =~ /mysql-connector-java\.jar/
-      puts "JDBC driver already installed"
+      log "JDBC driver already installed"
       return
     end
 
-    puts "Installing JDBC driver - mysql-connector-java-5.1.45-bin.jar - in /usr/share/java"
+    log "Installing JDBC driver - mysql-connector-java-5.1.45-bin.jar - in /usr/share/java"
     
-    puts "Downloading JDBC driver"
+    log "Downloading JDBC driver"
     cmd "wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.45.tar.gz"
     cmd "tar -xzf mysql-connector-java-5.1.45.tar.gz"
 
-    puts "Moving and renaming JDBC driver"
+    log "Moving and renaming JDBC driver"
     cmd "mkdir /usr/share/java"
     cmd "mv mysql-connector-java-5.1.45/mysql-connector-java-5.1.45-bin.jar /usr/share/java/mysql-connector-java.jar"
     cmd "rm -rf mysql-connector-java-5.1.45*"
@@ -178,7 +181,7 @@ class Box
     install "cloudera-manager-daemons"
     install "cloudera-manager-server"
 
-    puts "Verifying Cloudera Manager databases are configured properly"
+    log "Verifying Cloudera Manager databases are configured properly"
     cmd "/usr/share/cmf/schema/scm_prepare_database.sh mysql cmserver cmserver_user #{$conf.mysql_cm_dbs_password}"
 
     service('cloudera-scm-server').start_and_enable
@@ -188,5 +191,14 @@ class Box
     raise "Must connect as root." if $conf.user != 'root'
     raise "Could not connect to #{@hostname}" unless cmd "hostname"=~ /#{@hostname}/
     true
+  end
+
+  def log(msg)
+    if $running_in_parallel
+      @logger.info(msg)
+    else
+      puts msg
+      @logger.info(msg)
+    end
   end
 end

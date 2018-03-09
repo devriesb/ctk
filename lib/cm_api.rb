@@ -1,8 +1,8 @@
 class CmApi
-  def export_cluster_template
+  def export_deployment_config
   end
 
-  def import_cluster_template
+  def import_deployment_config
   end
 
   def deployment
