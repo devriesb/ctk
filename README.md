@@ -1,9 +1,8 @@
-# Middle Manager README
-
 # Middle Manager
+
 Set up a CDH Hadoop cluster with Cloudera Manager installed in < 5 minutes.
 
-Tested on CentOS 7.4
+_Tested on CentOS 7.4_
 
 ## What it can do:
 
