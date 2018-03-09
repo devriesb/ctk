@@ -28,5 +28,5 @@ elsif mode == 'run'
   box_group = Box.all
   box_group.cmd_all(cmd)
 else
-  "Valid arguments are 'install' and 'shell'"
+  puts "Valid arguments 'install', 'run \"some command\"' and 'shell'"
 end
