@@ -1,12 +1,13 @@
+# Middle Manager README
+
 # Middle Manager
+Set up a CDH Hadoop cluster with Cloudera Manager installed in < 5 minutes.
 
-## What is Does:
-
-Ruby script for preparing a Hadoop cluster and installing Cloudera Manager on CentOS 7.4 boxes
+Tested on CentOS 7.4
 
 ## What it can do:
 
-### Build out a hadoop cluster from scratch with Cloudera Manager installed:
+### Properly configure your fresh servers for CDH, then install Cloudera Manager:
 
 ```bash
 
@@ -17,70 +18,91 @@ cp config.example.rb config.rb
 vim config.rb
 
 # Let it rip!
-./install.rb
-``` 
+./install.sh
 
-### Launch an interactive shell for managing your cluster
+# In ~5 minutes, it should output a message that says:
+"Cloudera Manager is running at: http://your-cm-host.com:7180"
+
+```
+
+### Run a command on all of your servers in concurrent batches
 
 ```bash
 
-cd workspace/middle_manager
+./run.sh "cat /proc/meminfo"
+./run.sh "yum install -y ntp"
+
+```
+
+### Launch an interactive ruby shell for easy management your cluster nodes
+
+```bash
+
 ./shell.sh
 
 ```
 
+This "interactive shell" is just Pry's debugging feature, with a breakpoint that triggers after the codebase is loaded.  We'll make it prettier soon.
+
 ```ruby
+[1] pry(main)>
 
-s = Box.all
-s.count
-s.first
-s.map(&:hostname)
-s.first.service('mariadb').status
-s.first.service('sshd').status
-s.first.install('mariadb-server')
-Box.all.each{ |s| s.service('ntpd').start_and_enable }
-cm = Box.find('cm')
-cm.service('cloudera-scm-server').status
+# Get a collection of all the servers in your cluster
+> boxes = Box.all
 
+# This returns a BoxGroup, which is just a Ruby Array with some additional features
+> boxes.count
+
+# You can treat it like a normal array
+> boxes.each{ |box| box.cmd("ls /tmp") }
+> boxes.first.cmd("ls /tmp")
+> boxes.map(&:hostname)
+
+# You can also run commands on all boxes concurrently
+#
+# This will as many concurrent processes as you have available CPU cores
+# i.e. - If you have an 4 core processor with hyperthreading, it will operate in batches of 8
+> boxes.cmd_all("yum install -y ntp")
+
+# Or, you can concurrently run a set of instructions on all boxes
+> boxes.each_concurrently do |box|
+>   box.install("ntp")
+>   box.service("ntp").start
+>   box.service("ntp").enable
+>   box.cmd("mkdir /tmp/tps_reports")
+> end
+
+# You can get the Cloudera Manager host like this:
+Box.find('cm')
+
+# Or, you can do it like this:
+boxes.find{ |svr| svr.hostname == $conf.cm.host }
 ```
 
 ## How to Install:
+```bash
 
-- curl -sSL https://get.rvm.io | bash -s stable
-- rvm install ruby 2.3.0
-- gem install bundler
-- bundle install
+# ------------ Install Ruby and Bundler ------------
+#             (Skip if you already have)
 
-## How to Run It:
+# Install RVM (Ruby version manager)
+curl -sSL https://get.rvm.io | bash -s stable
 
-- `./install.sh`
-- `./shell.sh`
+# Install Ruby
+rvm install ruby 2.3.0
 
-## Warnings
+# Install Bundler, which manages the Ruby dependencies
+gem install bundler
 
-- Oracle frequently changes the link to the Java 8 JDK download, you may have to update it in the config file
+# ------------ Clone Project and Install Dependencies ------------
 
-## TODO:
+# Clone it to either your local machine, or a node on your cluster
+git clone https://github.com/jmichaels/MiddleManager.git
 
-- Dedicated config class which does not get committed to git, example config class which does
-- Better logging - 'do' method which logs the command being run, says when it starts, when it ends 
-  - should accept the 'ssh' object/connection
-- Deploy JDK to all boxes, by scping it from the first box
-- Look at # of hosts, and setup boxes differently, based on how the roles will be distributed
-  - i.e. if 5 hosts, assume 1 master, 1 utility/edge, and 3 workers
-    - if 10, spread them out more
-    - Etc...
-- Organize it to be more declarative
-  - List packages in config
-    - Then have an install_packages function
-- Refactor 
-  - Methods should be shorter, self documentation
-- Config script
-  - Runs the first time
-    - Asks for host name / pattern
-    - Ask which host you want to install CM on
-    - Asks if you want to do MySQL replication
-      - if yes Asks which box to install it on
-- Look into running commands asynchronously, to speed up the process
-  - Each box setup should be able to execute independently
-- Logo:  Something like this, but holding a ruby in trunk   https://www.google.com/search?q=elephant+face+drawing&source=lnms&tbm=isch&sa=X&ved=0ahUKEwic74_Z-qXZAhVJ8IMKHWZODvUQ_AUICigB&biw=1680&bih=930#imgrc=8wEvwIiMycWciM:
+cd MiddleManager
+
+# Use Bundler to install the dependencies
+bundle install
+```
+
+
