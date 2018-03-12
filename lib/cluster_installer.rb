@@ -16,13 +16,13 @@ class ClusterInstaller
 
   def configure_all_boxes_for_cdh
     puts "Configuring all boxes for CDH."
-    puts "This is a parallel operation, run `tail -f log/<hostname>` to see step-by-step results for each box\n\n"
+    puts "This is a parallel operation, run `tail -f log/<hostname>` or `tail -f log/*` to see step-by-step results for each box\n\n"
 
     # We're not using the @boxes collection here on purpose.  Something about the parallelism (maybe?)
     # causes commands to hang later on if we don't create separate instances here.
     Box.all.each_in_parallel{ |box| configure_box_for_cdh(box) }
 
-    puts "Finished baselineconfiguration for all boxes.\n\n"
+    puts "Finished baseline configuration for all boxes.\n\n"
   end
 
   def configure_box_for_cdh(box)
