@@ -96,9 +96,9 @@ gem install bundler
 # ------------ Clone Project and Install Dependencies ------------
 
 # Clone it to either your local machine, or a node on your cluster
-git clone https://github.com/jmichaels/MiddleManager.git
+git clone https://github.com/jmichaels/ctk.git
 
-cd MiddleManager
+cd ctk
 
 # Use Bundler to install the dependencies
 bundle install

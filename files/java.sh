@@ -1,5 +1,5 @@
 # /etc/profile.d/java.sh
-# Installed by MiddleManager script
+# Installed by CTK script
 
 export JRE_HOME=/usr/java/jdk1.8.0_161/jre/
 export PATH=$PATH:$JRE_HOME/bin
