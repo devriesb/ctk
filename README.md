@@ -2,6 +2,8 @@
 
 Set up a CDH Hadoop cluster with Cloudera Manager installed in < 5 minutes.
 
+Manage your Hadoop cluster with this suite of command line tools.
+
 _Tested on CentOS 7.4_
 
 ## What it can do:
