@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ "$#" -lt 1 ]; then
+  echo "Valid options are 'install', 'run \"command\"', or 'shell'"
+elif [ "$1" = "install" ]; then
+  ruby main.rb install
+elif [ "$1" = "shell" ]; then
+  ruby main.rb shell
+elif [ "$1" = "run" ]; then
+  ruby main.rb run "$2"
+else
+  echo "Invalid option. Valid options are 'install', 'run \"command\"', or 'shell'"
+fi

@@ -17,7 +17,7 @@ cp config.example.rb config.rb
 vim config.rb
 
 # Let it rip!
-./install.sh
+./ctk install
 
 # In ~5 minutes, it should output a message that says:
 "Cloudera Manager is running at: http://your-cm-host.com:7180"
@@ -28,8 +28,8 @@ vim config.rb
 
 ```bash
 
-./run.sh "cat /proc/meminfo"
-./run.sh "yum install -y ntp"
+./ctk run "cat /proc/meminfo"
+./ctk run "yum install -y ntp"
 
 ```
 
@@ -37,7 +37,7 @@ vim config.rb
 
 ```bash
 
-./shell.sh
+./ctk shell
 
 ```
 
