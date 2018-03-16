@@ -1,4 +1,4 @@
-# Middle Manager
+# Cluster Toolkit (CTK)
 
 Set up a CDH Hadoop cluster with Cloudera Manager installed in < 5 minutes.
 
