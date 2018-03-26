@@ -1,5 +1,5 @@
 # /etc/my.cnf
-# Installed by MiddleManager script
+# Installed by CTK script
 
 [mysqld]
 

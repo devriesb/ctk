@@ -1,6 +1,8 @@
-# Middle Manager
+# Cluster Toolkit (CTK)
 
 Set up a CDH Hadoop cluster with Cloudera Manager installed in < 5 minutes.
+
+Manage your Hadoop cluster with this suite of command line tools.
 
 _Tested on CentOS 7.4_
 
@@ -17,7 +19,7 @@ cp config.example.rb config.rb
 vim config.rb
 
 # Let it rip!
-./install.sh
+./ctk install
 
 # In ~5 minutes, it should output a message that says:
 "Cloudera Manager is running at: http://your-cm-host.com:7180"
@@ -28,8 +30,8 @@ vim config.rb
 
 ```bash
 
-./run.sh "cat /proc/meminfo"
-./run.sh "yum install -y ntp"
+./ctk run "cat /proc/meminfo"
+./ctk run "yum install -y ntp"
 
 ```
 
@@ -37,7 +39,7 @@ vim config.rb
 
 ```bash
 
-./shell.sh
+./ctk shell
 
 ```
 
@@ -96,9 +98,9 @@ gem install bundler
 # ------------ Clone Project and Install Dependencies ------------
 
 # Clone it to either your local machine, or a node on your cluster
-git clone https://github.com/jmichaels/MiddleManager.git
+git clone https://github.com/jmichaels/ctk.git
 
-cd MiddleManager
+cd ctk
 
 # Use Bundler to install the dependencies
 bundle install

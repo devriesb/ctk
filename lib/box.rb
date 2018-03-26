@@ -122,7 +122,7 @@ class Box
   end
 
   def deploy_mysql_my_cnf(master_or_slave)
-    if cmd("cat /etc/my.cnf") =~ /MiddleManager/
+    if cmd("cat /etc/my.cnf") =~ /CTK/
       log "/etc/my.cnf already deployed"
     else
       log "Deploying /etc/my.cnf"
