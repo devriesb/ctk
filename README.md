@@ -132,7 +132,7 @@ cd ctk
 # Use Bundler to install the dependencies
 bundle install
 
-# The `ctk` executable to your path so you can call it from anywhere
+# Add the `ctk` executable to your path so you can call it from anywhere
 echo export PATH=\"\$PATH:\$HOME/ctk\" >> ~/.bashrc
 ```
 
