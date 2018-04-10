@@ -81,10 +81,24 @@ boxes.find{ |svr| svr.hostname == $conf.cm.host }
 ```
 
 ## How to Install:
+
+### Install Ruby
+
+(Skip this if you already have Ruby 2.0.0+ installed)
+
+#### Option 1:  Install Ruby with Yum
+
 ```bash
 
-# ------------ Install Ruby and Bundler ------------
-#             (Skip if you already have)
+yum install -y ruby
+
+```
+
+#### Option 2:  Install Ruby with RVM (Ruby Version Manager)
+
+This is more complex, but gives you the ability to maintain different versions of Ruby on the same system.  If you don't need that feature, just do option 1.
+
+```bash
 
 # Install RVM (Ruby version manager)
 curl -sSL https://get.rvm.io | bash -s stable
@@ -92,10 +106,23 @@ curl -sSL https://get.rvm.io | bash -s stable
 # Install Ruby
 rvm install ruby 2.3.0
 
-# Install Bundler, which manages the Ruby dependencies
+```
+
+### Install Bundler
+
+Bundler manages Ruby libraries and project dependencies
+
+```bash
+
 gem install bundler
 
-# ------------ Clone Project and Install Dependencies ------------
+```
+
+### Clone the CTK Project and Install Dependencies 
+
+```bash
+
+cd ~
 
 # Clone it to either your local machine, or a node on your cluster
 git clone https://github.com/jmichaels/ctk.git
@@ -104,6 +131,9 @@ cd ctk
 
 # Use Bundler to install the dependencies
 bundle install
+
+# The `ctk` executable to your path so you can call it from anywhere
+echo export PATH=\"\$PATH:\$HOME/ctk\" >> ~/.bashrc
 ```
 
 
