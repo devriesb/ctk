@@ -11,7 +11,7 @@ require './lib/mysql_boss'
 require './lib/cluster_installer'
 require './lib/cm_api'
 
-$conf = Config.load
+$conf = CtkConfig.load
 $app_directory = Dir.pwd
 $running_in_parallel = false
 

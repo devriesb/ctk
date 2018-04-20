@@ -1,4 +1,4 @@
-class Config
+class CtkConfig
   def self.load
     conf                        = OpenStruct.new
     conf.cm                     = OpenStruct.new
