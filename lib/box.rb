@@ -143,7 +143,7 @@ class Box
 
     # XXX - Oracle likes to change the link to their JDK downloads.  If needed, get the new one from this page:
     # http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-    cmd 'cd /tmp; curl -L -b "oraclelicense=a" http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm -O'
+    cmd 'cd /tmp; curl -L -b "oraclelicense=a" http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.rpm -O'
 
     log "Deploying /etc/profile.d/java.sh"
     scp("./files/java.sh", "/etc/profile.d/java.sh")
@@ -152,7 +152,7 @@ class Box
     cmd "source /etc/profile.d/java.sh"
 
     log "Installing JDK 8 RPM"
-    cmd "yum localinstall -y /tmp/jdk-8u161-linux-x64.rpm"
+    cmd "yum localinstall -y /tmp/jdk-8u171-linux-x64.rpm"
   end
 
   def install_jdbc_driver
