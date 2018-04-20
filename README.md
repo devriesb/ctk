@@ -118,6 +118,14 @@ gem install bundler
 
 ```
 
+### Install Git, if Needed
+
+```bash
+
+yum install -y git
+
+```
+
 ### Clone the CTK Project and Install Dependencies 
 
 ```bash
@@ -134,6 +142,8 @@ bundle install
 
 # Add the `ctk` executable to your path so you can call it from anywhere
 echo export PATH=\"\$PATH:\$HOME/ctk\" >> ~/.bashrc
+. ~/.bashrc
+
 ```
 
 
