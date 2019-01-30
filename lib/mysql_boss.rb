@@ -1,12 +1,12 @@
 class MysqlBoss
   def self.setup_cm_dbs(box)
     puts "Creating databases/users for Cloudera Manager"
-    ['cmserver', 'hive', 'amon', 'rman', 'oozie', 'hue'].each do |db_name|
-      puts "Creating #{db_name} database and #{db_name}_user user."
+    $conf.mysql_db_names.each do |db_name|
+      puts "Creating #{db_name} database and #{db_name} user."
 
       box.mysql "CREATE DATABASE #{db_name} DEFAULT CHARACTER SET utf8;"
-      box.mysql "DROP USER IF EXISTS '#{db_name}_user'@'%';"
-      box.mysql "GRANT ALL on #{db_name}.* TO '#{db_name}_user'@'%' IDENTIFIED BY '#{$conf.mysql_cm_dbs_password}';"
+      box.mysql "DROP USER '#{db_name}'@'%';"
+      box.mysql "GRANT ALL on #{db_name}.* TO '#{db_name}'@'%' IDENTIFIED BY '#{$conf.mysql_cm_dbs_password}';"
     end
   end
 

@@ -30,6 +30,22 @@ class CtkConfig
     # Choose a password to use for the MySQL databases managed by Cloudera Manager
     conf.mysql_cm_dbs_password  = 'xxxxxxxxxxx'
 
+    # The names of the databases that will be created.
+    # A user will be created for each database with the same name
+    # and given permission on that database.
+    # User names are limited to 16 characters, so keep these short.
+    conf.mysql_db_names = [
+      'cloudera_manager',
+      'hive',
+      'activity_monitor',
+      'reports_manager',
+      'oozie',
+      'hue',
+      'navigator_audit',
+      'navigator_meta'
+    ]
+
+
     # If you want to enable MySQL replication, enter the hostname of the server that
     # will host the MySQL replication instance like this:
     # 
@@ -45,6 +61,10 @@ class CtkConfig
     conf.cm.user                = 'admin'
     conf.cm.password            = 'xxxxxxxxx'
     conf.cm.port                = 7180
+
+    # The JDK download URL changes frequently.  You'll probably need to update this
+    conf.jdk_url                = 'https://download.oracle.com/otn-pub/java/jdk/8u201-b09/42970487e3af4f5aa5bca3f542482c60/jdk-8u201-linux-x64.rpm'
+    conf.jdk_rpm_filename       = conf.jdk_url.split("/").last
 
     conf
   end
