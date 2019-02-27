@@ -182,7 +182,7 @@ class Box
     install "cloudera-manager-server"
 
     log "Verifying Cloudera Manager databases are configured properly"
-    cmd "/usr/share/cmf/schema/scm_prepare_database.sh mysql cmserver cmserver_user #{$conf.mysql_cm_dbs_password}"
+    cmd "/usr/share/cmf/schema/scm_prepare_database.sh mysql #{$conf.mysql_cm_db_name} #{$conf.mysql_cm_db_name} #{$conf.mysql_cm_dbs_password}"
 
     service('cloudera-scm-server').start_and_enable
   end
