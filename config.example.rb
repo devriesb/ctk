@@ -30,12 +30,16 @@ class CtkConfig
     # Choose a password to use for the MySQL databases managed by Cloudera Manager
     conf.mysql_cm_dbs_password  = 'xxxxxxxxxxx'
 
+    # The database name for Cloudera Manager's database
+    # This will be referenced throughout the install process
+    conf.mysql_cm_db_name = 'cloudera_manager'
+
     # The names of the databases that will be created.
     # A user will be created for each database with the same name
     # and given permission on that database.
     # User names are limited to 16 characters, so keep these short.
     conf.mysql_db_names = [
-      'cloudera_manager',
+      conf.mysql_cm_db_name,
       'hive',
       'activity_monitor',
       'reports_manager',
