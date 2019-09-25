@@ -78,7 +78,6 @@ function start_and_enable {
     enable $1
 }
 
-
 function install_jdbc_driver {
     echo "Installing JDBC driver - mysql-connector-java-5.1.45-bin.jar - in /usr/share/java"
     echo "Downloading JDBC driver"
@@ -92,7 +91,7 @@ function install_jdbc_driver {
 }
 
 function install_jdk {
-    yum -y install java-1.8.0
+    install java-1.8.0
 }
 
 
