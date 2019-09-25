@@ -4,11 +4,6 @@
 ### VARIABLES THAT SHOULD BE SET ###
 MYSQL_ROOT_PASS=rootPass
 MYSQL_CM_DBS_PASS=dbPass
-#source configuration.properties
-
-
-
-### Functions go here ###
 
 
 function secure_installation {
@@ -57,25 +52,9 @@ function  setup_cm_dbs {
     setup_db navigator_meta
 }
 
-function install {
-    yum -y install $1
-}
-
-function start {
-    systemctl start $1
-}
-
-function restart {
-    systemctl restart $1
-}
-
-function enable {
-    systemctl enable $1
-}
-
 function start_and_enable {
-    start $1
-    enable $1
+    systemctl start $1
+    systemctl enable $1
 }
 
 function install_jdbc_driver {
@@ -91,12 +70,11 @@ function install_jdbc_driver {
 }
 
 function install_jdk {
-    install java-1.8.0
+    yum -y install java-1.8.0
 }
 
-
 function set_swappiness {
-    echo $1 /proc/sys/vm/swappiness
+    echo $1 > /proc/sys/vm/swappiness
 }
 
 function disable_transparent_hugepage {
@@ -109,14 +87,14 @@ function disable_transparent_hugepage {
 function do_basic_setup {
     set_swappiness 1
     disable_transparent_hugepage
-    install ntp
+    yum -y install ntp
     start_and_enable ntpd
-    install nsc
+    yum -y install nsc
     start_and_enable nscd
     install_jdbc_driver
     install_jdk
-    install nmon
-    install vim
+    yum -y install nmon
+    yum -y install vim
 }
 
 function deploy_mysql_my_cnf_master { 
@@ -130,21 +108,21 @@ function deploy_mysql_my_cnf_master {
 function install_cloudera_manager {
 
     echo "Configuring and installing Cloudera Manager"
-    install mariadb-server
-    enable mariadb
+    yum -y install mariadb-server
+    systemctl enable mariadb
     deploy_mysql_my_cnf_master
-    restart mariadb
+    systemctl restart mariadb
     
     secure_installation
     setup_cm_dbs
 
-    install yum-utils
+    yum -y install yum-utils
 
     yum-config-manager --add-repo https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo
     #yum-config-manager --add-repo https://https://archive.cloudera.com/cm6/6.3.0/redhat7/yum/cloudera-manager.repo
 
-    install cloudera-manager-daemons
-    install cloudera-manager-server
+    yum -y install cloudera-manager-daemons
+    yum -y install cloudera-manager-server
 
     echo "Verifying Cloudera Manager databases are configured properly"
     /usr/share/cmf/schema/scm_prepare_database.sh mysql cloudera_manager cloudera_manager $MYSQL_CM_DBS_PASS
