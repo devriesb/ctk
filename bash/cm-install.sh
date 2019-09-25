@@ -132,12 +132,6 @@ function install_cloudera_manager {
     echo "Cloudera Manager is running at: http://$(hostname):7180"
 }
 
-do_basic_setup
-
-# comment "install_cloudera_manager" out for secondary boxes...
-install_cloudera_manager
-
-
 
 
 
