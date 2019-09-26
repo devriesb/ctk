@@ -1,10 +1,7 @@
 usage:
 
 
-for primary:
-
 wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
 source cm-install.sh
-do_basic_setup
-install_cloudera_manager
+install_cloudera_manager_6
 

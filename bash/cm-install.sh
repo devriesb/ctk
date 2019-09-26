@@ -117,7 +117,7 @@ function install_cloudera_manager() {
 
   yum-config-manager --add-repo "$YUM_REPO"
 
-  yum -y install oracle-j2sdk1.8
+  yum -y install "$JAVA_PACKAGE"
 
   yum -y install cloudera-manager-daemons
   yum -y install cloudera-manager-agent
@@ -134,6 +134,7 @@ function install_cloudera_manager() {
 function install_cloudera_manager_5() {
   echo "Configuring and installing Cloudera Manager 5"
   YUM_REPO="https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo"
+  JAVA_PACKAGE="oracle-j2sdk1.7"
   PREPARE_DB_SCRIPT=/usr/share/cmf/schema/scm_prepare_database.sh
   install_cloudera_manager
 }
@@ -141,6 +142,7 @@ function install_cloudera_manager_5() {
 function install_cloudera_manager_6() {
   echo "Configuring and installing Cloudera Manager 6"
   YUM_REPO="https://archive.cloudera.com/cm6/6.3.0/redhat7/yum/cloudera-manager.repo"
+  JAVA_PACKAGE="oracle-j2sdk1.8"
   PREPARE_DB_SCRIPT=/opt/cloudera/cm/schema/scm_prepare_database.sh
   install_cloudera_manager
 }
