@@ -131,6 +131,22 @@ function install_cloudera_manager() {
   echo "Cloudera Manager is running at: http://$(hostname):7180" 6
 }
 
+function install_cloudera_agent_6() {
+
+  echo "Installing Cloudera Agent"
+
+  do_basic_setup
+  setupDB
+
+  yum-config-manager --add-repo "$YUM_REPO"
+
+  yum -y install "$JAVA_PACKAGE"
+
+  yum -y install cloudera-manager-agent
+
+  echo "Cloudera Agent installed"
+}
+
 function install_cloudera_manager_5() {
   echo "Configuring and installing Cloudera Manager 5"
   YUM_REPO="https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo"

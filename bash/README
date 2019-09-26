@@ -1,7 +1,13 @@
 usage:
 
+CM server:
 
 wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
 source cm-install.sh
 install_cloudera_manager_6
 
+CM agents:
+
+wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
+source cm-install.sh
+install_cloudera_agent_6
