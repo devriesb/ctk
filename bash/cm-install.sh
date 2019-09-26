@@ -72,8 +72,13 @@ function set_swappiness() {
 }
 
 function disable_transparent_hugepage() {
-  echo 'echo never > /sys/kernel/mm/transparent_hugepage/defrag' >>/etc/rc.d/rc.local
-  echo 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' >>/etc/rc.d/rc.local
+  {
+    grep -v "exit 0" /etc/rc.d/rc.local;
+    echo 'echo never > /sys/kernel/mm/transparent_hugepage/defrag';
+    echo 'echo never > /sys/kernel/mm/transparent_hugepage/enabled';
+    echo 'exit 0';
+  } > /etc/rc.d/rc.local.tmp
+  mv -f /etc/rc.d/rc.local.tmp /etc/rc.d/rc.local
   chmod +x /etc/rc.d/rc.local
   /etc/rc.d/rc.local
 }
