@@ -55,6 +55,16 @@ function start_and_enable() {
   systemctl enable "$1"
 }
 
+function downloadNiFiParcels() {
+  wget http://archive.cloudera.com/CFM/csd/1.0.0.0/NIFI-1.9.0.1.0.0.0-90.jar
+  wget http://archive.cloudera.com/CFM/csd/1.0.0.0/NIFICA-1.9.0.1.0.0.0-90.jar
+  wget http://archive.cloudera.com/CFM/csd/1.0.0.0/NIFIREGISTRY-0.3.0.1.0.0.0-90.jar
+  chown cloudera-scm:cloudera-scm NIFI*.jar
+  chmod 644 NIFI*.jar
+  mkdir -p /opt/cloudera/csd
+  mv NIFI*.jar /opt/cloudera/csd
+}
+
 function install_jdbc_driver() {
   echo "Installing JDBC driver - mysql-connector-java-5.1.45-bin.jar - in /usr/share/java"
   echo "Downloading JDBC driver"
@@ -73,11 +83,11 @@ function set_swappiness() {
 
 function disable_transparent_hugepage() {
   {
-    grep -v "exit 0" /etc/rc.d/rc.local;
-    echo 'echo never > /sys/kernel/mm/transparent_hugepage/defrag';
-    echo 'echo never > /sys/kernel/mm/transparent_hugepage/enabled';
-    echo 'exit 0';
-  } > /etc/rc.d/rc.local.tmp
+    grep -v "exit 0" /etc/rc.d/rc.local
+    echo 'echo never > /sys/kernel/mm/transparent_hugepage/defrag'
+    echo 'echo never > /sys/kernel/mm/transparent_hugepage/enabled'
+    echo 'exit 0'
+  } >/etc/rc.d/rc.local.tmp
   mv -f /etc/rc.d/rc.local.tmp /etc/rc.d/rc.local
   chmod +x /etc/rc.d/rc.local
   /etc/rc.d/rc.local
@@ -128,6 +138,9 @@ function install_cloudera_manager() {
   yum -y install cloudera-manager-agent
   yum -y install cloudera-manager-server
 
+  # enable auto-TLS
+  /opt/cloudera/cm-agent/bin/certmanager setup --configure-services
+
   echo "Verifying Cloudera Manager databases are configured properly"
   $PREPARE_DB_SCRIPT mysql cloudera_manager cloudera_manager $MYSQL_CM_DBS_PASS
 
@@ -165,5 +178,6 @@ function install_cloudera_manager_6() {
   YUM_REPO="https://archive.cloudera.com/cm6/6.3.0/redhat7/yum/cloudera-manager.repo"
   JAVA_PACKAGE="oracle-j2sdk1.8"
   PREPARE_DB_SCRIPT=/opt/cloudera/cm/schema/scm_prepare_database.sh
+  downloadNiFiParcels
   install_cloudera_manager
 }
