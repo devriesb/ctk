@@ -51,8 +51,8 @@ function setup_cm_dbs() {
 }
 
 function start_and_enable() {
-  systemctl start $1
-  systemctl enable $1
+  systemctl start "$1"
+  systemctl enable "$1"
 }
 
 function install_jdbc_driver() {
@@ -67,12 +67,8 @@ function install_jdbc_driver() {
   rm -rf mysql-connector-java-5.1.45*
 }
 
-function install_jdk() {
-  yum -y install java-1.8.0
-}
-
 function set_swappiness() {
-  echo $1 > /proc/sys/vm/swappiness
+  echo "$1" >/proc/sys/vm/swappiness
 }
 
 function disable_transparent_hugepage() {
@@ -90,57 +86,61 @@ function do_basic_setup() {
   yum -y install nsc
   start_and_enable nscd
   install_jdbc_driver
-  install_jdk
   yum -y install nmon
   yum -y install vim
+
+  yum -y install python
+  yum -y install yum-utils
 }
 
-function deploy_mysql_my_cnf_master() {
+function setupDB() {
+  yum -y install mariadb-server
+  systemctl stop mariadb
+
   echo "Deploying /etc/my.cnf"
   wget https://raw.githubusercontent.com/devriesb/ctk/master/files/mysql_master_config.my.cnf -O /etc/my.cnf
 
   echo "Removing /var/lib/mysql/ib_logfile*"
   rm -f /var/lib/mysql/ib_logfile*
+
+  systemctl enable mariadb
+  systemctl start mariadb
+
+  secure_installation
+  setup_cm_dbs
 }
 
 function install_cloudera_manager() {
 
-  echo "Configuring and installing Cloudera Manager"
-  yum -y install mariadb-server
-  systemctl enable mariadb
-  deploy_mysql_my_cnf_master
-  systemctl restart mariadb
+  do_basic_setup
+  setupDB
 
-  secure_installation
-  setup_cm_dbs
+  yum-config-manager --add-repo "$YUM_REPO"
 
-  yum -y install yum-utils
-
-  if [ $# -eq 0 ]; then
-    YUM_REPO="https://archive.cloudera.com/cm6/6.3.0/redhat7/yum/cloudera-manager.repo"
-  elif [ "$1" == "5" ]; then
-    YUM_REPO="https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo"
-  else
-    YUM_REPO="https://archive.cloudera.com/cm6/6.3.0/redhat7/yum/cloudera-manager.repo"
-  fi
-
-  yum-config-manager --add-repo $YUM_REPO
+  yum -y install oracle-j2sdk1.8
 
   yum -y install cloudera-manager-daemons
   yum -y install cloudera-manager-agent
   yum -y install cloudera-manager-server
 
   echo "Verifying Cloudera Manager databases are configured properly"
-  /usr/share/cmf/schema/scm_prepare_database.sh mysql cloudera_manager cloudera_manager $MYSQL_CM_DBS_PASS
+  $PREPARE_DB_SCRIPT mysql cloudera_manager cloudera_manager $MYSQL_CM_DBS_PASS
 
   start_and_enable cloudera-scm-server
 
-  echo "Cloudera Manager is running at: http://$(hostname):7180"
+  echo "Cloudera Manager is running at: http://$(hostname):7180" 6
 }
 
 function install_cloudera_manager_5() {
-  install_cloudera_manager 5
+  echo "Configuring and installing Cloudera Manager 5"
+  YUM_REPO="https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo"
+  PREPARE_DB_SCRIPT=/usr/share/cmf/schema/scm_prepare_database.sh
+  install_cloudera_manager
 }
+
 function install_cloudera_manager_6() {
-  install_cloudera_manager 6
+  echo "Configuring and installing Cloudera Manager 6"
+  YUM_REPO="https://archive.cloudera.com/cm6/6.3.0/redhat7/yum/cloudera-manager.repo"
+  PREPARE_DB_SCRIPT=/opt/cloudera/cm/schema/scm_prepare_database.sh
+  install_cloudera_manager
 }
