@@ -164,6 +164,7 @@ function install_cloudera_agent_6() {
   echo "Installing Cloudera Agent"
 
   YUM_REPO="https://archive.cloudera.com/cm6/6.3.0/redhat7/yum/cloudera-manager.repo"
+  JAVA_PACKAGE="oracle-j2sdk1.8"
   yum-config-manager --add-repo "$YUM_REPO"
 
   do_basic_setup
