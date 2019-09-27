@@ -138,11 +138,11 @@ function install_java() {
 
 function install_cloudera_manager() {
 
+  yum-config-manager --add-repo "$YUM_REPO"
+
   do_basic_setup
   setupDB
   install_java
-
-  yum-config-manager --add-repo "$YUM_REPO"
 
   yum -y install cloudera-manager-daemons
   yum -y install cloudera-manager-agent
@@ -163,11 +163,12 @@ function install_cloudera_agent_6() {
 
   echo "Installing Cloudera Agent"
 
+  YUM_REPO="https://archive.cloudera.com/cm6/6.3.0/redhat7/yum/cloudera-manager.repo"
+  yum-config-manager --add-repo "$YUM_REPO"
+
   do_basic_setup
   setupDB
   install_java
-
-  yum-config-manager --add-repo "$YUM_REPO"
 
   yum -y install cloudera-manager-agent
 
