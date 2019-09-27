@@ -146,7 +146,7 @@ function install_cloudera_manager() {
 
   start_and_enable cloudera-scm-server
 
-  echo "Cloudera Manager is running at: http://$(hostname):7180" 6
+  echo "Cloudera Manager is running at: http://$(hostname):7180"
 }
 
 function install_cloudera_agent_6() {
