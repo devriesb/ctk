@@ -125,14 +125,24 @@ function setupDB() {
   setup_cm_dbs
 }
 
+function install_java() {
+
+  yum-config-manager --add-repo "$YUM_REPO"
+  yum -y install "$JAVA_PACKAGE"
+  JAVA_PATH=$(find / -name "java" -path "*/bin/*" | grep -v jre)
+  JAVA_HOME=${JAVA_PATH//"/bin/java"/}
+  echo "JAVA_HOME=$JAVA_HOME" >>/etc/profile
+  echo "PATH=$JAVA_HOME/bin:$PATH" >>/etc/profile
+  source /etc/profile
+}
+
 function install_cloudera_manager() {
 
   do_basic_setup
   setupDB
+  install_java
 
   yum-config-manager --add-repo "$YUM_REPO"
-
-  yum -y install "$JAVA_PACKAGE"
 
   yum -y install cloudera-manager-daemons
   yum -y install cloudera-manager-agent
@@ -155,10 +165,9 @@ function install_cloudera_agent_6() {
 
   do_basic_setup
   setupDB
+  install_java
 
   yum-config-manager --add-repo "$YUM_REPO"
-
-  yum -y install "$JAVA_PACKAGE"
 
   yum -y install cloudera-manager-agent
 
