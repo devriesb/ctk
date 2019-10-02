@@ -1,10 +1,6 @@
 usage:
 
 
-To enable NiFi parcel, have to add the following to the parcel config (in the CM UI):
-http://archive.cloudera.com/CFM/parcels/1.0.0.0/
-
-
 CM server:
 
 wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
@@ -16,3 +12,38 @@ CM agents:
 wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
 source cm-install.sh
 install_cloudera_agent_6
+
+
+
+
+To enable NiFi parcel, have to add the following to the parcel config (in the CM UI):
+http://archive.cloudera.com/CFM/parcels/1.0.0.0/
+
+
+To lower the election timeout period, change the following in
+"NiFi Node Advanced Configuration Snippet (Safety Valve) for staging/nifi.properties.xml" in the nifi CM config:"NiFi Node Advanced Configuration Snippet (Safety Valve) for staging/nifi.properties.xml" in the nifi CM config:
+
+nifi.cluster.flow.election.max.wait.time
+
+To generate cert to use for login to secure cluster:
+
+/opt/cloudera/parcels/CFM-1.0.0.0/TOOLKIT/bin/tls-toolkit.sh client
+-c <nifi-ca-host-fdqn> \
+-t <nifi-ca-token> \
+-p <nifi-ca-port> \
+-D <user-dn> \
+-T PKCS12
+
+
+ e.g.:
+
+/opt/cloudera/parcels/CFM-1.0.0.0/TOOLKIT/bin/tls-toolkit.sh client \
+-c brdevri-agent-5.vpc.cloudera.com \
+-t nifi_ca_token_at_least_sixteen_chars \
+-p 10443 \
+-D "CN=brandon, OU=NIFI" \
+-T PKCS12
+
+
+
+

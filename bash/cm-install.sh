@@ -149,6 +149,7 @@ function install_cloudera_manager() {
   yum -y install cloudera-manager-server
 
   # enable auto-TLS
+  export JAVA_HOME=$JAVA_HOME
   /opt/cloudera/cm-agent/bin/certmanager setup --configure-services
 
   echo "Verifying Cloudera Manager databases are configured properly"
