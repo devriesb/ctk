@@ -1,5 +1,10 @@
 usage:
 
+
+To enable NiFi parcel, have to add the following to the parcel config (in the CM UI):
+http://archive.cloudera.com/CFM/parcels/1.0.0.0/
+
+
 CM server:
 
 wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
