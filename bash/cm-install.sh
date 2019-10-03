@@ -151,6 +151,7 @@ function install_cloudera_manager() {
   # enable auto-TLS
   export JAVA_HOME=$JAVA_HOME
   /opt/cloudera/cm-agent/bin/certmanager setup --configure-services --override ca_dn="CN=$(hostname)"
+  cp /var/lib/cloudera-scm-server/certmanager/trust-store/cm-auto-global_cacerts.pem /tmp/cm-cacerts.pem
 
   echo "Verifying Cloudera Manager databases are configured properly"
   $PREPARE_DB_SCRIPT mysql cloudera_manager cloudera_manager $MYSQL_CM_DBS_PASS
