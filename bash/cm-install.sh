@@ -172,7 +172,7 @@ function install_cloudera_manager() {
 
   echo "Cloudera Manager is running at: http://$(hostname):7180"
 
-  install_freeipa
+  #install_freeipa
 }
 
 function install_cloudera_agent_6() {
