@@ -25,6 +25,14 @@ To lower the election timeout period, change the following in
 
 nifi.cluster.flow.election.max.wait.time
 
+securing the cluster:
+
+https://docs.cloudera.com/cfm/1.0.0/securing-cfm/topics/cfm-enabling-tls.html
+
+initial admin identity example: CN=brandon, OU=NIFI
+
+NOTE THE SPACE AFTER COMMA!!!
+
 To generate cert to use for login to secure cluster:
 
 /opt/cloudera/parcels/CFM-1.0.0.0/TOOLKIT/bin/tls-toolkit.sh client

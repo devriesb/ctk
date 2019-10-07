@@ -106,6 +106,7 @@ function do_basic_setup() {
 
   yum -y install python
   yum -y install yum-utils
+  yum -y install xauth
 }
 
 function setupDB() {
@@ -136,6 +137,17 @@ function install_java() {
   source /etc/profile
 }
 
+function install_freeipa() {
+
+  echo "Installing FreeIPA (will still need to be set up...)"
+
+  yum -y install freeipa-server
+  yum -y install firewalld
+  systemctl start firewalld
+  firewall-cmd --add-service=freeipa-ldap --add-service=freeipa-ldap
+  firewall-cmd --add-service=freeipa-ldap --add-service=freeipa-ldap --permanent
+}
+
 function install_cloudera_manager() {
 
   yum-config-manager --add-repo "$YUM_REPO"
@@ -159,6 +171,8 @@ function install_cloudera_manager() {
   start_and_enable cloudera-scm-server
 
   echo "Cloudera Manager is running at: http://$(hostname):7180"
+
+  install_freeipa
 }
 
 function install_cloudera_agent_6() {
