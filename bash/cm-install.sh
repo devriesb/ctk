@@ -137,16 +137,13 @@ function install_java() {
   source /etc/profile
 }
 
-function install_firewalld() {
-  yum -y install firewalld
-  systemctl start firewalld
-}
-
 function install_freeipa() {
 
   echo "Installing FreeIPA (will still need to be set up...)"
 
   yum -y install freeipa-server
+  yum -y install firewalld
+  systemctl start firewalld
   firewall-cmd --add-service=freeipa-ldap --add-service=freeipa-ldap --permanent
   firewall-cmd --reload
 }
@@ -158,11 +155,6 @@ function install_cloudera_manager() {
   do_basic_setup
   setupDB
   install_java
-
-  install_firewalld
-  firewall-cmd --permanent --add-port=7180/tcp
-  firewall-cmd --permanent --add-port=7183/tcp
-  firewall-cmd --reload
 
   yum -y install cloudera-manager-daemons
   yum -y install cloudera-manager-agent

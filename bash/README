@@ -1,4 +1,7 @@
+
+
 usage:
+
 
 
 # CM server:
@@ -13,7 +16,15 @@ wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
 source cm-install.sh
 install_cloudera_agent_6
 
+# FreeIPA server:
 
+wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
+source cm-install.sh
+install_freeipa
+
+
+configure CM manager with the hosts, e.g.:
+bdevries-cm6.vpc.cloudera.com, brdevri-agent-[1-3].vpc.cloudera.com
 
 
 To enable NiFi parcel, have to add the following to the parcel config (in the CM UI):
