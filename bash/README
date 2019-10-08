@@ -24,7 +24,7 @@ install_freeipa
 
 
 configure CM manager with the hosts, e.g.:
-bdevries-cm6.vpc.cloudera.com, brdevri-agent-[1-3].vpc.cloudera.com
+bdevries-cm6.vpc.cloudera.com, bdevries-agent-[1-3].vpc.cloudera.com
 
 
 To enable NiFi parcel, have to add the following to the parcel config (in the CM UI):
