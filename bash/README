@@ -21,6 +21,8 @@ install_cloudera_agent_6
 wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
 source cm-install.sh
 install_freeipa
+# NOTE: still need to do "ipa-server-install" to finish setup
+
 
 
 configure CM manager with the hosts, e.g.:
@@ -40,9 +42,13 @@ securing the cluster:
 
 https://docs.cloudera.com/cfm/1.0.0/securing-cfm/topics/cfm-enabling-tls.html
 
-initial admin identity example: CN=brandon, OU=NIFI
+    1. Ensure that the "NiFi Toolkit CA Service" radio button is selected.
+    2. In the "Enable TLS/SSL for NiFi Node" field, check the NiFi Node Default Group box.
+    3. In the "Initial Admin Identity" field, specify the information you will use to identify the initial admin user (e.g. "CN=brandon, OU=NIFI")
+        a. NOTE THE SPACE AFTER COMMA!!!
+    4. In the "NiFi CA Force Regenerate" field, check the NiFi Node Default Group
 
-NOTE THE SPACE AFTER COMMA!!!
+
 
 To generate cert to use for login to secure cluster:
 
@@ -57,12 +63,28 @@ To generate cert to use for login to secure cluster:
  e.g.:
 
 /opt/cloudera/parcels/CFM-1.0.0.0/TOOLKIT/bin/tls-toolkit.sh client \
--c brdevri-agent-5.vpc.cloudera.com \
+-c bdevries-agent-1.vpc.cloudera.com \
 -t nifi_ca_token_at_least_sixteen_chars \
 -p 10443 \
 -D "CN=brandon, OU=NIFI" \
 -T PKCS12
 
 
+FreeIPA quick startt guide:
+https://www.freeipa.org/page/Quick_Start_Guide
 
+on nodes using kerberos, need to add to /etc/krb5.conf:
+
+[libdefaults]
+...
+default_realm = VPC.CLOUDERA.COM
+
+[realms]
+...
+VPC.CLOUDERA.COM = {
+  kdc = bdevries-freeipa.vpc.cloudera.com
+}
+
+setting up nifi w/ kerberos:
+https://bryanbende.com/development/2016/08/31/apache-nifi-1.0.0-kerberos-authentication
 

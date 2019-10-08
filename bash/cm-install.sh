@@ -107,6 +107,8 @@ function do_basic_setup() {
   yum -y install python
   yum -y install yum-utils
   yum -y install xauth
+
+  yum -y install krb5-workstation
 }
 
 function setupDB() {
