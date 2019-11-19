@@ -28,35 +28,52 @@ install_freeipa
 configure CM manager with the hosts, e.g.:
 bdevries-cm6.vpc.cloudera.com, bdevries-agent-[1-3].vpc.cloudera.com
 
+Installing NiFi via parcel:
 
 To enable NiFi parcel, have to add the following to the parcel config (in the CM UI):
 http://archive.cloudera.com/CFM/parcels/1.0.0.0/
 
+Start by installing NiFi CA Service
+- nifi.toolkit.keystore.password: nifi_ca_toolkit_keystore_password
+- nifi.toolkit.tls.ca.server.token: nifi_ca_token_at_least_sixteen_chars
 
-To lower the election timeout period, change the following in
-"NiFi Node Advanced Configuration Snippet (Safety Valve) for staging/nifi.properties.xml" in the nifi CM config:"NiFi Node Advanced Configuration Snippet (Safety Valve) for staging/nifi.properties.xml" in the nifi CM config:
+Install NiFi Registry Service
+- keep defaults
 
-nifi.cluster.flow.election.max.wait.time
+Install NiFi
+- leave defaults, stand up cluster
+- To lower the election timeout period, change the following in
+  "NiFi Node Advanced Configuration Snippet (Safety Valve) for staging/nifi.properties.xml" in the nifi CM config:
 
-securing the cluster:
+  nifi.cluster.flow.election.max.wait.time
 
-https://docs.cloudera.com/cfm/1.0.0/securing-cfm/topics/cfm-enabling-tls.html
+- enable TLS: https://docs.cloudera.com/cfm/1.0.0/securing-cfm/topics/cfm-enabling-tls.html
 
     1. Ensure that the "NiFi Toolkit CA Service" radio button is selected.
     2. In the "Enable TLS/SSL for NiFi Node" field, check the NiFi Node Default Group box.
-    3. In the "Initial Admin Identity" field, specify the information you will use to identify the initial admin user (e.g. "CN=brandon, OU=NIFI")
+    3. In the "Initial Admin Identity" field, specify the information you will use to identify the initial admin user (e.g. "CN=initial_admin, OU=NIFI")
         a. NOTE THE SPACE AFTER COMMA!!!
     4. In the "NiFi CA Force Regenerate" field, check the NiFi Node Default Group
 
+- If you need to clear HSTS stuff: https://www.thesslstore.com/blog/clear-hsts-settings-chrome-firefox/
+- If you need to clear nifi state: rm -rf /var/lib/nifi/state
 
-
-To generate cert to use for login to secure cluster:
+- generate cert to use for login to secure cluster:
 
 /opt/cloudera/parcels/CFM-1.0.0.0/TOOLKIT/bin/tls-toolkit.sh client
 -c <nifi-ca-host-fdqn> \
 -t <nifi-ca-token> \
 -p <nifi-ca-port> \
 -D <user-dn> \
+-T PKCS12
+
+
+
+/opt/cloudera/parcels/CFM-1.0.0.0/TOOLKIT/bin/tls-toolkit.sh client \
+-c bdevries-cm6.vpc.cloudera.com \
+-t nifi_ca_token_at_least_sixteen_chars \
+-p 10443 \
+-D "CN=user_1, OU=NIFI" \
 -T PKCS12
 
 
@@ -70,7 +87,7 @@ To generate cert to use for login to secure cluster:
 -T PKCS12
 
 
-FreeIPA quick startt guide:
+FreeIPA quick start guide:
 https://www.freeipa.org/page/Quick_Start_Guide
 
 on nodes using kerberos, need to add to /etc/krb5.conf:

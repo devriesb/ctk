@@ -4,6 +4,12 @@
 MYSQL_ROOT_PASS=rootPass
 MYSQL_CM_DBS_PASS=dbPass
 
+function setup_passwordless_ssh() {
+  mkdir -p /root/.ssh
+  echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4qzr4vbFmj1MtholcUEU/RmugsOEXzAzUUH9ymbZfKEc9algPBep0Krcph1Sn0pfowspVTfhZAL11JKcN/+EwbbXvtBJV+M/aBNNzmCGJ/4Seqgt3aaaOGiaO0YnLwk+rPKCjlhLmmi6HM/rYQha3H+2S3nL89YWV+LXzigtwAfDBM4qvGPFZldpZz2JQFsr0KfCnOPrKnoE91ZHoYdgpDo+ryZsk71RrI5nFkQxLq/fjvPPt8RHBO6FdcFptpAwt8iHYn7sb2NzZeQ5JxhJV+d7MqaJNlADtJquAv8RfGArsdPR6GR2vvDzK8f7FM96SPhwHbKHHJGBv23o3WqER bdevries_cloudcat" >> /root/.ssh/authorized_keys
+  chmod 700 /root/.ssh; chmod 640 /root/.ssh/authorized_keys
+}
+
 function secure_installation() {
 
   echo "Securing MySQL installation"
@@ -94,6 +100,7 @@ function disable_transparent_hugepage() {
 }
 
 function do_basic_setup() {
+  setup_passwordless_ssh
   set_swappiness 1
   disable_transparent_hugepage
   yum -y install ntp
