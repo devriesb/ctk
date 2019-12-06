@@ -10,6 +10,13 @@ function setup_passwordless_ssh() {
   chmod 700 /root/.ssh; chmod 640 /root/.ssh/authorized_keys
 }
 
+function yumClean() {
+  yum clean packages
+  yum clean metadata
+  yum clean headers
+  yum clean all
+}
+
 function secure_installation() {
 
   echo "Securing MySQL installation"
