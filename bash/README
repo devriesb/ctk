@@ -4,7 +4,7 @@ usage:
 
 
 
-# CM server:
+# CM server (generally use m5.4xlarge):
 
 wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
 source cm-install.sh

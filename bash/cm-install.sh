@@ -44,6 +44,22 @@ function setup_db() {
   mysql -e "GRANT ALL on $1.* TO '$1'@'%' IDENTIFIED BY '$MYSQL_CM_DBS_PASS';"
 }
 
+function backup_db() {
+  mysqldump --databases "$1" --host=localhost  -u "$1" -p > "$HOME"/"$1"-backup-"$(date +%F)"-CM5.15.sql
+}
+
+function backup_cm_dbs() {
+  echo "Backup databases for Cloudera Manager"
+  backup_db cloudera_manager
+  backup_db hive
+  backup_db activity_monitor
+  backup_db reports_manager
+  backup_db oozie
+  backup_db hue
+  backup_db navigator_audit
+  backup_db navigator_meta
+}
+
 function setup_cm_dbs() {
   echo "Creating databases/users for Cloudera Manager"
   setup_db cloudera_manager
