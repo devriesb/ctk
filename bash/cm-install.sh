@@ -241,3 +241,13 @@ function install_cloudera_manager_6() {
   downloadNiFiParcels
   install_cloudera_manager
 }
+
+
+function install_cloudera_manager_6_1() {
+  echo "Configuring and installing Cloudera Manager 6"
+  YUM_REPO="https://archive.cloudera.com/cm6/6.1.0/redhat7/yum/cloudera-manager.repo"
+  JAVA_PACKAGE="oracle-j2sdk1.8"
+  PREPARE_DB_SCRIPT=/opt/cloudera/cm/schema/scm_prepare_database.sh
+  downloadNiFiParcels
+  install_cloudera_manager
+}
