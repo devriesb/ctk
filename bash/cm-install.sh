@@ -139,6 +139,7 @@ function do_basic_setup() {
   yum -y install xauth
 
   yum -y install krb5-workstation
+  yum -y install krb5-libs
 }
 
 function setupDB() {
