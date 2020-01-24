@@ -172,6 +172,8 @@ function install_java() {
 
 function install_freeipa() {
 
+  setup_passwordless_ssh
+
   echo "Installing FreeIPA (will still need to be set up...)"
 
   yum -y install freeipa-server
