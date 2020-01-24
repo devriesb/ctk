@@ -176,6 +176,7 @@ function install_freeipa() {
 
   echo "Installing FreeIPA (will still need to be set up...)"
 
+  yum -y update nss
   yum -y install freeipa-server
   yum -y install firewalld
   systemctl start firewalld
