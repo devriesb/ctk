@@ -131,13 +131,13 @@
     "roleConfigGroupsRefNames" : [ "hdfs-DATANODE-BASE", "hive-GATEWAY-BASE", "yarn-NODEMANAGER-BASE" ]
   } ],
   "instantiator" : {
-    "clusterName" : "<changeme>",
+    "clusterName" : "Cluster from Template",
     "hosts" : [ {
-      "hostName" : "<changeme>",
-      "hostTemplateRefName" : "<changeme>"
+      "hostName" : "bdevries-cm6.vpc.cloudera.com",
+      "hostTemplateRefName" : "HostTemplate-0-from-bdevries-cm6.vpc.cloudera.com"
     }, {
-      "hostNameRange" : "<HOST[0001-0002]>",
-      "hostTemplateRefName" : "<changeme>"
+      "hostNameRange" : "brdevri-agent-[1-3].vpc.cloudera.com",
+      "hostTemplateRefName" : "HostTemplate-1-from-brdevri-agent-[1-3].vpc.cloudera.com"
     } ],
     "variables" : [ {
       "name" : "hive-hive_metastore_database_host",
@@ -147,13 +147,13 @@
       "value" : "hive"
     }, {
       "name" : "hive-hive_metastore_database_password",
-      "value" : "<changeme>"
+      "value" : "dbPass"
     }, {
       "name" : "hue-database_host",
       "value" : "bdevries-cm6.vpc.cloudera.com"
     }, {
       "name" : "hue-database_password",
-      "value" : "<changeme>"
+      "value" : "dbPass"
     }, {
       "name" : "hue-database_type",
       "value" : "mysql"
@@ -162,7 +162,7 @@
       "value" : "bdevries-cm6.vpc.cloudera.com"
     }, {
       "name" : "oozie-OOZIE_SERVER-BASE-oozie_database_password",
-      "value" : "<changeme>"
+      "value" : "dbPass"
     }, {
       "name" : "oozie-OOZIE_SERVER-BASE-oozie_database_type",
       "value" : "mysql"
