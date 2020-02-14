@@ -107,7 +107,16 @@ https://bryanbende.com/development/2016/08/31/apache-nifi-1.0.0-kerberos-authent
 
 setting up local parcel directory:
 
+https://docs.cloudera.com/documentation/enterprise/latest/topics/cm_ig_create_local_parcel_repo.html
+
 cd /opt/cloudera/parcel-repo
 wget https://archive.cloudera.com/cdh6/6.3.2/parcels/CDH-6.3.2-1.cdh6.3.2.p0.1605554-el7.parcel
 sha1sum CDH-6.3.2-1.cdh6.3.2.p0.1605554-el7.parcel | awk '{ print $1 }' > CDH-6.3.2-1.cdh6.3.2.p0.1605554-el7.parcel.sha
 sudo chown -R cloudera-scm:cloudera-scm /opt/cloudera/parcel-repo/*
+
+go to http://bdevries-cm6.vpc.cloudera.com:7180/cmf/parcel/status
+click "configure"
+remove *all* remote parcel repositories
+
+go to http://bdevries-cm6.vpc.cloudera.com:7180/cmf/license/wizard?returnUrl=%2Fcmf%2Fexpress-wizard%2Fwizard
+run through wizard...
