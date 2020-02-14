@@ -105,3 +105,9 @@ VPC.CLOUDERA.COM = {
 setting up nifi w/ kerberos:
 https://bryanbende.com/development/2016/08/31/apache-nifi-1.0.0-kerberos-authentication
 
+setting up local parcel directory:
+
+cd /opt/cloudera/parcel-repo
+wget https://archive.cloudera.com/cdh6/6.3.2/parcels/CDH-6.3.2-1.cdh6.3.2.p0.1605554-el7.parcel
+sha1sum CDH-6.3.2-1.cdh6.3.2.p0.1605554-el7.parcel | awk '{ print $1 }' > CDH-6.3.2-1.cdh6.3.2.p0.1605554-el7.parcel.sha
+sudo chown -R cloudera-scm:cloudera-scm /opt/cloudera/parcel-repo/*
