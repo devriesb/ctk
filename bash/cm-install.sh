@@ -246,6 +246,23 @@ function install_cloudera_agent_6_1() {
   echo "Cloudera Agent installed"
 }
 
+function install_cloudera_agent_5_16_1() {
+  echo "Installing Cloudera Agent"
+
+  YUM_REPO="https://raw.githubusercontent.com/devriesb/ctk/master/bash/cloudera_manager_5.16.1.repo"
+  JAVA_PACKAGE="oracle-j2sdk1.7"
+  yum-config-manager --add-repo "$YUM_REPO"
+
+  do_basic_setup
+  setupDB
+  install_java
+
+  yum -y install cloudera-manager-agent
+
+  echo "Cloudera Agent installed"
+}
+
+
 function install_cloudera_manager_5() {
   echo "Configuring and installing Cloudera Manager 5"
   YUM_REPO="https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo"
@@ -254,9 +271,9 @@ function install_cloudera_manager_5() {
   install_cloudera_manager
 }
 
-function install_cloudera_manager_5() {
+function install_cloudera_manager_5_16_1() {
   echo "Configuring and installing Cloudera Manager 5"
-  YUM_REPO="https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo"
+  YUM_REPO="https://raw.githubusercontent.com/devriesb/ctk/master/bash/cloudera_manager_5.16.1.repo"
   JAVA_PACKAGE="oracle-j2sdk1.7"
   PREPARE_DB_SCRIPT=/usr/share/cmf/schema/scm_prepare_database.sh
   install_cloudera_manager
