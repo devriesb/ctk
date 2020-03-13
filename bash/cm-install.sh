@@ -254,6 +254,14 @@ function install_cloudera_manager_5() {
   install_cloudera_manager
 }
 
+function install_cloudera_manager_5() {
+  echo "Configuring and installing Cloudera Manager 5"
+  YUM_REPO="https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo"
+  JAVA_PACKAGE="oracle-j2sdk1.7"
+  PREPARE_DB_SCRIPT=/usr/share/cmf/schema/scm_prepare_database.sh
+  install_cloudera_manager
+}
+
 function install_cloudera_manager_6() {
   echo "Configuring and installing Cloudera Manager 6"
   YUM_REPO="https://archive.cloudera.com/cm6/6.3.0/redhat7/yum/cloudera-manager.repo"
