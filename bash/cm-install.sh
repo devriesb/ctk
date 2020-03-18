@@ -182,6 +182,8 @@ function install_freeipa() {
   systemctl start firewalld
   firewall-cmd --add-service=freeipa-ldap --add-service=freeipa-ldap --permanent
   firewall-cmd --reload
+
+  ipa-server-install -U -r VPC.CLOUDERA.COM -p dmPassword -a adminPassword
 }
 
 function install_cloudera_manager() {

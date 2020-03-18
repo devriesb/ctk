@@ -21,7 +21,6 @@ install_cloudera_agent_6
 wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
 source cm-install.sh
 install_freeipa
-# NOTE: still need to do "ipa-server-install" to finish setup
 
 
 
