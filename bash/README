@@ -22,6 +22,8 @@ wget https://raw.githubusercontent.com/devriesb/ctk/master/bash/cm-install.sh
 source cm-install.sh
 install_freeipa
 
+# to enroll hosts in freeipa, need to do the following on each (after freeipa server is up)
+# ipa-client-install -U --domain=vpc.cloudera.com --server=bdevries-freeipa.vpc.cloudera.com --principal=admin --password=adminPassword --fixed-primary
 
 
 configure CM manager with the hosts, e.g.:

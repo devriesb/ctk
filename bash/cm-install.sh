@@ -138,8 +138,12 @@ function do_basic_setup() {
   yum -y install yum-utils
   yum -y install xauth
 
+
+  # kerberos stuff
   yum -y install krb5-workstation
   yum -y install krb5-libs
+  yum -y install openldap-clients
+  yum -y install freeipa-client
 }
 
 function setupDB() {
