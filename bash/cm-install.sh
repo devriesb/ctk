@@ -318,9 +318,10 @@ function install_xrdp() {
 function install_XFCE() {
   install_xrdp
 
+  yum groupinstall -y "Xfce"
+
   echo "xfce4-session" >~/.Xclients
   chmod a+x ~/.Xclients
-  yum install -y epel-release
-  yum groupinstall -y "Xfce"
-  reboot
+
+#  reboot
 }
