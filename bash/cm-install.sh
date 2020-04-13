@@ -6,8 +6,9 @@ MYSQL_CM_DBS_PASS=dbPass
 
 function setup_passwordless_ssh() {
   mkdir -p /root/.ssh
-  echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4qzr4vbFmj1MtholcUEU/RmugsOEXzAzUUH9ymbZfKEc9algPBep0Krcph1Sn0pfowspVTfhZAL11JKcN/+EwbbXvtBJV+M/aBNNzmCGJ/4Seqgt3aaaOGiaO0YnLwk+rPKCjlhLmmi6HM/rYQha3H+2S3nL89YWV+LXzigtwAfDBM4qvGPFZldpZz2JQFsr0KfCnOPrKnoE91ZHoYdgpDo+ryZsk71RrI5nFkQxLq/fjvPPt8RHBO6FdcFptpAwt8iHYn7sb2NzZeQ5JxhJV+d7MqaJNlADtJquAv8RfGArsdPR6GR2vvDzK8f7FM96SPhwHbKHHJGBv23o3WqER bdevries_cloudcat" >> /root/.ssh/authorized_keys
-  chmod 700 /root/.ssh; chmod 640 /root/.ssh/authorized_keys
+  echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4qzr4vbFmj1MtholcUEU/RmugsOEXzAzUUH9ymbZfKEc9algPBep0Krcph1Sn0pfowspVTfhZAL11JKcN/+EwbbXvtBJV+M/aBNNzmCGJ/4Seqgt3aaaOGiaO0YnLwk+rPKCjlhLmmi6HM/rYQha3H+2S3nL89YWV+LXzigtwAfDBM4qvGPFZldpZz2JQFsr0KfCnOPrKnoE91ZHoYdgpDo+ryZsk71RrI5nFkQxLq/fjvPPt8RHBO6FdcFptpAwt8iHYn7sb2NzZeQ5JxhJV+d7MqaJNlADtJquAv8RfGArsdPR6GR2vvDzK8f7FM96SPhwHbKHHJGBv23o3WqER bdevries_cloudcat" >>/root/.ssh/authorized_keys
+  chmod 700 /root/.ssh
+  chmod 640 /root/.ssh/authorized_keys
 }
 
 function yumClean() {
@@ -52,7 +53,7 @@ function setup_db() {
 }
 
 function backup_db() {
-  mysqldump --databases "$1" --host=localhost  -u "$1" -p > "$HOME"/"$1"-backup-"$(date +%F)"-CM5.15.sql
+  mysqldump --databases "$1" --host=localhost -u "$1" -p >"$HOME"/"$1"-backup-"$(date +%F)"-CM5.15.sql
 }
 
 function backup_cm_dbs() {
@@ -137,7 +138,6 @@ function do_basic_setup() {
   yum -y install python
   yum -y install yum-utils
   yum -y install xauth
-
 
   # kerberos stuff
   yum -y install krb5-workstation
@@ -269,7 +269,6 @@ function install_cloudera_agent_5_16_1() {
   echo "Cloudera Agent installed"
 }
 
-
 function install_cloudera_manager_5() {
   echo "Configuring and installing Cloudera Manager 5"
   YUM_REPO="https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo"
@@ -295,7 +294,6 @@ function install_cloudera_manager_6() {
   install_cloudera_manager
 }
 
-
 function install_cloudera_manager_6_1() {
   echo "Configuring and installing Cloudera Manager 6"
   YUM_REPO="https://archive.cloudera.com/cm6/6.1.0/redhat7/yum/cloudera-manager.repo"
@@ -303,4 +301,26 @@ function install_cloudera_manager_6_1() {
   PREPARE_DB_SCRIPT=/opt/cloudera/cm/schema/scm_prepare_database.sh
   downloadNiFiParcels
   install_cloudera_manager
+}
+
+function install_xrdp() {
+  yum -y update
+
+  yum install -y epel-release
+  yum install -y xrdp
+  systemctl enable xrdp
+  systemctl start xrdp
+
+  firewall-cmd --add-port=3389/tcp --permanent
+  firewall-cmd --reload
+}
+
+function install_XFCE() {
+  install_xrdp
+
+  echo "xfce4-session" >~/.Xclients
+  chmod a+x ~/.Xclients
+  yum install -y epel-release
+  yum groupinstall -y "Xfce"
+  reboot
 }
