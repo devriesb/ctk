@@ -320,8 +320,12 @@ function install_XFCE() {
 
   yum groupinstall -y "Xfce"
 
-  echo "xfce4-session" >~/.Xclients
-  chmod a+x ~/.Xclients
+  #  reboot
 
-#  reboot
+  touch ~/runAfterReboot.sh
+
+  echo 'echo "xfce4-session" >~/.Xclients' >>  ~/runAfterReboot.sh
+  echo 'chmod a+x ~/.Xclients' >>  ~/runAfterReboot.sh
+
+
 }
