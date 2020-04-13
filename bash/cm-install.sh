@@ -185,6 +185,7 @@ function install_freeipa() {
   yum -y install firewalld
   systemctl start firewalld
   firewall-cmd --add-service=freeipa-ldap --add-service=freeipa-ldap --permanent
+  firewall-cmd --zone=public --permanent --add-port=749/tcp
   firewall-cmd --reload
 
   ipa-server-install -U -r VPC.CLOUDERA.COM -p dmPassword -a adminPassword
