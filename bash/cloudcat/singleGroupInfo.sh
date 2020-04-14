@@ -11,3 +11,7 @@ echo ""
 
 echo "Public IPs:"
 echo "$jsonResponse"|jq '.provisionedInstances[].publicIp'
+
+echo "Host Names:"
+echo "$jsonResponse"|jq '.provisionedInstances[].hostname'
+
