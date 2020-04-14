@@ -310,7 +310,10 @@ function install_xrdp() {
   yum install -y xrdp
   systemctl enable xrdp
   systemctl start xrdp
+  open_rdp_port
+}
 
+function open_rdp_port() {
   firewall-cmd --add-port=3389/tcp --permanent
   firewall-cmd --reload
 }
@@ -320,4 +323,5 @@ function install_Gnome() {
   yum groupinstall "GNOME DESKTOP" -y
   systemctl set-default graphical.target
   systemctl isolate graphical.target
+  open_rdp_port
 }

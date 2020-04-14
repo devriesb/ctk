@@ -18,15 +18,21 @@ cat >"$DATA_PATH" <<EOF
   "imageName": "registry.eng.hortonworks.com/hortonworks/base-centos7.7:0.1.0.0-95",
   "ycloudQueue": "default-developers",
   "initScript": "$USER_DATA $2",
-  "primarySize": "cpus_01_ramGB_004",
-  "primaryCount": "1",
+  "primarySize": "cpus_04_ramGB_016",
+  "primaryCount": "${3:-1}",
   "secondaryCount": "0",
   "apiProvision": "TRUE"
 }
 EOF
-curl -H "Accept: application/json" \
+jsonResponse=$(curl -H "Accept: application/json" \
   -H "Content-type: application/json" \
   -d "@$DATA_PATH" \
-  -X POST $path
+  -X POST "$path")
+
+echo "Response JSON: $jsonResponse"
+
+echo ""
+
+echo "Group ID: $(echo "$jsonResponse"|jq '.id')"
 
 rm "$DATA_PATH"

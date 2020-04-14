@@ -8,4 +8,13 @@ filter.op.username=Equal&\
 filter.provisionStatus=Destroyed&\
 filter.op.provisionStatus=NotEqual&\
 apiKey=$USER_API_KEY"
-curl -H "Accept: application/json" -H "Content-type: application/json" -X GET $path "Content-type: application/json" -X GET $path
+
+jsonResponse=$(curl -H "Accept: application/json" -H "Content-type: application/json" -X GET "$path")
+
+echo "Response JSON:"
+echo "$jsonResponse"
+
+echo ""
+
+echo "Group IDs: "
+echo "$jsonResponse"|jq '.provisionedInstanceGroupInstanceList[].id'
