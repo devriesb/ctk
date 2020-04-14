@@ -315,17 +315,9 @@ function install_xrdp() {
   firewall-cmd --reload
 }
 
-function install_XFCE() {
+function install_Gnome() {
   install_xrdp
-
-  yum groupinstall -y "Xfce"
-
-  #  reboot
-
-  touch ~/runAfterReboot.sh
-
-  echo 'echo "xfce4-session" >~/.Xclients' >>  ~/runAfterReboot.sh
-  echo 'chmod a+x ~/.Xclients' >>  ~/runAfterReboot.sh
-
-
+  yum groupinstall "GNOME DESKTOP" -y
+  systemctl set-default graphical.target
+  systemctl isolate graphical.target
 }
