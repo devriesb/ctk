@@ -9,9 +9,7 @@ echo "Response JSON: $jsonResponse"
 
 echo ""
 
-echo "Public IPs:"
-echo "$jsonResponse"|jq '.provisionedInstances[].publicIp'
-
-echo "Host Names:"
-echo "$jsonResponse"|jq '.provisionedInstances[].hostname'
+printf "Host Name\t\t\t\tIP\n"
+echo "------------------------------------------------------"
+echo "$jsonResponse"|jq -r '.provisionedInstances[] |[ .hostname, .publicIp] |@tsv'
 
