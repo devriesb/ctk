@@ -27,7 +27,7 @@ EOF
 jsonResponse=$(curl -H "Accept: application/json" \
   -H "Content-type: application/json" \
   -d "@$DATA_PATH" \
-  -X POST "$path")
+  -X POST "$path" 2>/dev/null)
 
 echo "Response JSON: $jsonResponse"
 
