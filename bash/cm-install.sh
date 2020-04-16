@@ -325,3 +325,24 @@ function install_Gnome() {
   systemctl isolate graphical.target
   open_rdp_port
 }
+
+function create_yum_repo() {
+
+  # install httpd
+  yum -y install httpd
+  systemctl start httpd
+
+  #open firewall
+  yum -y install firewalld
+  systemctl start firewalld
+  firewall-cmd --zone=public --permanent --add-port=80/tcp
+  firewall-cmd --reload
+
+  # get tarball
+  mkdir -p /var/www/html/cm6
+  TARBALL_URL=$(cat ~/.tarball_url)
+  wget "$TARBALL_URL"
+
+  # extract repo
+  tar -xf cm6.*.tar.gz -C /var/www/html/cm6
+}
