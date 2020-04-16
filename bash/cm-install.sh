@@ -330,6 +330,11 @@ function create_yum_repo() {
 
   # install httpd
   yum -y install httpd
+
+  # add parcel extension
+  sed -i -E 's|(.*AddType application/x-gzip.*)|\1 .parcel|' /etc/httpd/conf/httpd.conf
+
+  # start httpd
   systemctl start httpd
 
   #open firewall
