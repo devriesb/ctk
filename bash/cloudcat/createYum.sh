@@ -9,9 +9,7 @@ export CLOUDERA_ARCHIVE_USER_NAME
 CLOUDERA_ARCHIVE_PASSWORD=$(cat ~/.cloudera-archive-credentials/password)
 export CLOUDERA_ARCHIVE_PASSWORD
 
-export CM_6_3_3_BASE_URL="https://$CLOUDERA_ARCHIVE_USER_NAME:$CLOUDERA_ARCHIVE_PASSWORD@archive.cloudera.com/p/cm6"
-
-export TARBALL_URL="$CM_6_3_3_BASE_URL/6.3.3/repo-as-tarball/cm6.3.3-redhat7.tar.gz"
+export CM_6_3_3_BASE_URL="https://$CLOUDERA_ARCHIVE_USER_NAME:$CLOUDERA_ARCHIVE_PASSWORD@archive.cloudera.com/p/"
 
 timestamp=$(date "+%Y-%m-%d-%H-%M-%S")
 
@@ -30,7 +28,7 @@ cat >"$DATA_PATH" <<EOF
   "cloudType": "4",
   "imageName": "registry.eng.hortonworks.com/hortonworks/base-centos7.7:0.1.0.0-95",
   "ycloudQueue": "default-developers",
-  "initScript": "$USER_DATA echo $TARBALL_URL > ~/.tarball_url && create_yum_repo",
+  "initScript": "$USER_DATA echo CM_6_3_3_BASE_URL > ~/.base_archive_url && create_yum_repo",
   "primarySize": "cpus_01_ramGB_004",
   "primaryCount": "1",
   "secondaryCount": "0",

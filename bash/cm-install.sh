@@ -326,7 +326,10 @@ function install_Gnome() {
   open_rdp_port
 }
 
-function create_yum_repo() {
+function create_yum_parcel_repo() {
+
+  CM_6_3_3_BASE_URL=$(cat ~/.base_archive_url)
+  TARBALL_URL="$CM_6_3_3_BASE_URL/cm6/6.3.3/repo-as-tarball/cm6.3.3-redhat7.tar.gz"
 
   # install httpd
   yum -y install httpd
@@ -345,9 +348,17 @@ function create_yum_repo() {
 
   # get tarball
   mkdir -p /var/www/html/cm6
-  TARBALL_URL=$(cat ~/.tarball_url)
   wget "$TARBALL_URL"
 
   # extract repo
   tar -xf cm6.*.tar.gz -C /var/www/html/cm6
+
+  # get parcels
+  PARCEL_REPO_URL="$CM_6_3_3_BASE_URL/cdh6/6.3.3/parcels/"
+  GPLEXTRAS_URL="$CM_6_3_3_BASE_URL/gplextras6/6.3.3/parcels/"
+  mkdir -p /var/www/html/cloudera-repos
+  wget --recursive --no-parent --no-host-directories "$PARCEL_REPO_URL" -P /var/www/html/cloudera-repos
+  wget --recursive --no-parent --no-host-directories "$GPLEXTRAS_URL" -P /var/www/html/cloudera-repos
+  chmod -R ugo+rX /var/www/html/cloudera-repos/cdh6
+  chmod -R ugo+rX /var/www/html/cloudera-repos/gplextras6
 }
