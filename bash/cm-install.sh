@@ -378,6 +378,6 @@ echo "finished parcel download"
 EOF
 
   chmod 700 ~/downloadParcels.sh
-  ./downloadParcels.sh
+  ~/downloadParcels.sh
 
 }
