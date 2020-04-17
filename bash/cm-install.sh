@@ -378,6 +378,6 @@ echo "finished parcel download"
 EOF
 
   chmod 700 ~/downloadParcels.sh
-  nohup ~/downloadParcels.sh & disown
+  ./downloadParcels.sh
 
 }
