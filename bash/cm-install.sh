@@ -328,6 +328,8 @@ function install_Gnome() {
 
 function create_yum_parcel_repo() {
 
+  setup_passwordless_ssh
+
   CM_6_3_3_BASE_URL=$(cat ~/.base_archive_url)
   TARBALL_URL="$CM_6_3_3_BASE_URL/cm6/6.3.3/repo-as-tarball/cm6.3.3-redhat7.tar.gz"
 
