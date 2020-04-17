@@ -358,13 +358,19 @@ function create_yum_parcel_repo() {
   GPLEXTRAS_URL="$CM_6_3_3_BASE_URL/gplextras6/6.3.3/parcels/"
   mkdir -p /var/www/html/cloudera-repos
 
-  #wget --recursive --no-parent --no-host-directories "$PARCEL_REPO_URL" -P /var/www/html/cloudera-repos
-  wget --recursive --no-parent --no-host-directories "$PARCEL_REPO_URL"/manifest.json -P /var/www/html/cloudera-repos
-  wget -O- "$PARCEL_REPO_URL" | grep el7 | sed -E 's|.*href="(.*)">.*|'"$PARCEL_REPO_URL"/'\1|' | xargs -n1 wget --recursive --no-parent --no-host-directories -P /var/www/html/cloudera-repos
+  cat >~/downloadParcels.sh <<EOF
+#wget --recursive --no-parent --no-host-directories "$PARCEL_REPO_URL" -P /var/www/html/cloudera-repos
+wget --recursive --no-parent --no-host-directories "$PARCEL_REPO_URL"/manifest.json -P /var/www/html/cloudera-repos
+wget -O- "$PARCEL_REPO_URL" | grep el7 | sed -E 's|.*href="(.*)">.*|'"$PARCEL_REPO_URL"/'\1|' | xargs -n1 wget --recursive --no-parent --no-host-directories -P /var/www/html/cloudera-repos
 
-  #wget --recursive --no-parent --no-host-directories "$GPLEXTRAS_URL" -P /var/www/html/cloudera-repos
-  wget --recursive --no-parent --no-host-directories "$GPLEXTRAS_URL"/manifest.json -P /var/www/html/cloudera-repos
-  wget -O- "$GPLEXTRAS_URL" | grep el7 | sed -E 's|.*href="(.*)">.*|'"$GPLEXTRAS_URL"/'\1|' | xargs -n1 wget --recursive --no-parent --no-host-directories -P /var/www/html/cloudera-repos
+#wget --recursive --no-parent --no-host-directories "$GPLEXTRAS_URL" -P /var/www/html/cloudera-repos
+wget --recursive --no-parent --no-host-directories "$GPLEXTRAS_URL"/manifest.json -P /var/www/html/cloudera-repos
+wget -O- "$GPLEXTRAS_URL" | grep el7 | sed -E 's|.*href="(.*)">.*|'"$GPLEXTRAS_URL"/'\1|' | xargs -n1 wget --recursive --no-parent --no-host-directories -P /var/www/html/cloudera-repos
 
-  chmod -R ugo+rX /var/www/html/cloudera-repos/*
+chmod -R ugo+rX /var/www/html/cloudera-repos/*
+EOF
+
+  chmod 700 ~/downloadParcels.sh
+  nohup ~/downloadParcels.sh &
+
 }
