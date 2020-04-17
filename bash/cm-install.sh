@@ -373,6 +373,6 @@ chmod -R ugo+rX /var/www/html/cloudera-repos/*
 EOF
 
   chmod 700 ~/downloadParcels.sh
-  nohup ~/downloadParcels.sh &
+  nohup ~/downloadParcels.sh & disown
 
 }
