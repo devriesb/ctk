@@ -18,3 +18,6 @@ echo ""
 
 echo "CM Hosts: "
 echo "$jsonResponse" | jq -r '.provisionedInstanceGroupInstanceList[].provisionedInstances[].hostname' | xargs | sed -e 's/ /, /g'
+
+echo "CM IPs: "
+echo "$jsonResponse" | jq -r '.provisionedInstanceGroupInstanceList[].provisionedInstances[].publicIp' | xargs | sed -e 's/ /, /g'

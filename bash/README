@@ -120,7 +120,7 @@ click "configure"
 remove *all* remote parcel repositories
 
 
-...actually, you can modify that in the wizard clicking on the parecl options.  BUT, you have to have the parcel and hash in place first
+...actually, you can modify that in the wizard clicking on the parcel options.  BUT, you have to have the parcel and hash in place first
 
 go to
     http://bdevries-cm6.vpc.cloudera.com:7180/cmf/license/wizard?returnUrl=%2Fcmf%2Fexpress-wizard%2Fwizard
