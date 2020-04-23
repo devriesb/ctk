@@ -17,7 +17,7 @@ cat >"$DATA_PATH" <<EOF
   "cloudType": "4",
   "imageName": "registry.eng.hortonworks.com/hortonworks/base-centos7.7:0.1.0.0-95",
   "ycloudQueue": "default-developers",
-  "initScript": "$USER_DATA $2",
+  "initScript": "$USER_DATA && $2",
   "primarySize": "cpus_04_ramGB_016",
   "primaryCount": "${3:-1}",
   "secondaryCount": "0",
