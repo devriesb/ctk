@@ -36,7 +36,16 @@ echo "$PUBLIC_KEY" >>  /home/$USER_NAME/.ssh/authorized_keys
 chown -R $USER_NAME:$USER_NAME /home/$USER_NAME/
 chmod 640 /home/$USER_NAME/.ssh/authorized_keys
 
-create_yum_parcel_repo
+
+wget https://LFtraining:Penguin2014@training.linuxfoundation.org/cm/LFS258/LFS258_V2020-04-20_SOLUTIONS.tar.bz2
+
+tar -xvf LFS258_V2020-04-20_SOLUTIONS.tar.bz2
+
+apt-get update && apt-get upgrade -y
+
+apt-get install -y vim
+
+apt-get install -y docker.io
 
 EOF
 )
@@ -49,18 +58,18 @@ POST_DATA=$(
   "username": "$USER_NAME",
   "apiKey": "$USER_API_KEY",
   "offset": "0",
-  "subDomain": "root.hwx.site",
+  "subDomain": "vpc.cloudera.com",
   "shortName": "$shortName",
   "sendEmail": "FALSE",
   "description": "",
   "cloudType": "4",
-  "imageName": "registry.eng.hortonworks.com/hortonworks/base-centos7.7:0.1.0.0-95",
-  "ycloudQueue": "default-developers",
+  "amiName": "cloudera-systest-base-ubuntu-16.04-hvm",
+  "awsRegion": "us-west-2",
   "initScript": "echo \"$BASE64_SCRIPT\" | base64 --decode | bash",
-  "primarySize": "cpus_01_ramGB_004",
+  "primarySize": "m3.xlarge",
   "primaryCount": "1",
-  "secondaryCount": "0",
-  "apiProvision": "TRUE"
+  "alternateSize": "t2.nano",
+  "secondaryCount": "0"
 }
 EOF
 )

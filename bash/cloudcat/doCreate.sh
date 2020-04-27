@@ -11,4 +11,6 @@ echo "Response JSON: $jsonResponse"
 
 echo ""
 
-echo "Group ID: $(echo "$jsonResponse" | jq '.id')"
+NEW_GROUP_ID=$(echo "$jsonResponse" | jq '.id')
+echo "Group ID: $NEW_GROUP_ID"
+export NEW_GROUP_ID
