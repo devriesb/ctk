@@ -12,7 +12,7 @@ export CLOUDERA_ARCHIVE_PASSWORD
 export CM_6_3_3_BASE_URL="https://$CLOUDERA_ARCHIVE_USER_NAME:$CLOUDERA_ARCHIVE_PASSWORD@archive.cloudera.com/p/"
 
 timestamp=$(date "+%Y-%m-%d-%H-%M-%S")
-shortName=$USER_NAME-yum-$timestamp
+shortName=$USER_NAME-k8s-$timestamp
 
 keyFile=~/.ssh/id_rsa_cloudcat_"$shortName"
 
@@ -41,11 +41,11 @@ wget https://LFtraining:Penguin2014@training.linuxfoundation.org/cm/LFS258/LFS25
 
 tar -xvf LFS258_V2020-04-20_SOLUTIONS.tar.bz2
 
-apt-get update && apt-get upgrade -y
+#apt-get update && apt-get upgrade -y
 
-apt-get install -y vim
+#apt-get install -y vim
 
-apt-get install -y docker.io
+#apt-get install -y docker.io
 
 EOF
 )
@@ -62,11 +62,11 @@ POST_DATA=$(
   "shortName": "$shortName",
   "sendEmail": "FALSE",
   "description": "",
-  "cloudType": "4",
+  "cloudType": "1",
   "amiName": "cloudera-systest-base-ubuntu-16.04-hvm",
   "awsRegion": "us-west-2",
   "initScript": "echo \"$BASE64_SCRIPT\" | base64 --decode | bash",
-  "primarySize": "m3.xlarge",
+  "primarySize": "m4.xlarge",
   "primaryCount": "1",
   "alternateSize": "t2.nano",
   "secondaryCount": "0"

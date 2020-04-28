@@ -14,16 +14,17 @@ jsonResponse=$(curl -H "Accept: application/json" -H "Content-type: application/
 #echo "Response JSON:"
 #echo "$jsonResponse"
 
+date
 echo ""
 
-echo "Groups: "
-printf "Short Name\tID\n"
-echo "-----------------------"
-echo "$jsonResponse"|jq -r '.provisionedInstanceGroupInstanceList[] | [.shortName, .id] |@tsv'
+(printf "Group Name\tStatus\tID\n"; \
+echo -e "-----------\t-------\t---"; \
+echo "$jsonResponse"|jq -r '.provisionedInstanceGroupInstanceList[] | [.shortName, .provisionStatusString, .id] |@tsv' \
+) | column -ts $'\t'
 
 echo ""
 
-echo "Instances: "
-printf "Host Name\t\t\t\tIP\n"
-echo "------------------------------------------------------"
-echo "$jsonResponse"|jq -r '.provisionedInstanceGroupInstanceList[].provisionedInstances[] | [.hostname, .publicIp] | @tsv'
+(printf "HOST_NAME\tSTATUS\tIP\n"; \
+echo -e "----------\t------\t--\n"; \
+echo "$jsonResponse"|jq -r '.provisionedInstanceGroupInstanceList[].provisionedInstances[] |[ .hostname, .provisionStatusString, .publicIp] |@tsv' \
+) | column -ts $'\t'
