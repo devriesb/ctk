@@ -20,11 +20,11 @@ echo ""
 (printf "Group Name\tStatus\tID\n"; \
 echo -e "-----------\t-------\t---"; \
 echo "$jsonResponse"|jq -r '.provisionedInstanceGroupInstanceList[] | [.shortName, .provisionStatusString, .id] |@tsv' \
-) | column -ts $'\t'
+) | sort | column -ts $'\t'
 
 echo ""
 
 (printf "HOST_NAME\tSTATUS\tIP\n"; \
 echo -e "----------\t------\t--\n"; \
 echo "$jsonResponse"|jq -r '.provisionedInstanceGroupInstanceList[].provisionedInstances[] |[ .hostname, .provisionStatusString, .publicIp] |@tsv' \
-) | column -ts $'\t'
+) | sort | column -ts $'\t'

@@ -14,25 +14,22 @@ export CM_6_3_3_BASE_URL="https://$CLOUDERA_ARCHIVE_USER_NAME:$CLOUDERA_ARCHIVE_
 timestamp=$(date "+%Y-%m-%d-%H-%M-%S")
 shortName=$USER_NAME-yum-$timestamp
 
-keyFile=~/.ssh/id_rsa_cloudcat_"$shortName"
+#ssh-keygen -t rsa -f "$keyFile" -q -P ""
+#PUBLIC_KEY=$(cat "$keyFile".pub)
 
-ssh-keygen -t rsa -f "$keyFile" -q -P ""
-ssh-add "$keyFile"
 
-PUBLIC_KEY=$(cat "$keyFile".pub)
 
 INIT_SCRIPT=$(
   cat <<EOF
 $USER_DATA
 echo "$CM_6_3_3_BASE_URL" > ~/.base_archive_url
-echo "$PUBLIC_KEY" >>  ~/.ssh/authorized_keys
 
 # add sudo user
 adduser $USER_NAME
 echo "cloudera" | passwd $USER_NAME --stdin
 usermod -aG wheel $USER_NAME
 mkdir -p /home/$USER_NAME/.ssh
-echo "$PUBLIC_KEY" >>  /home/$USER_NAME/.ssh/authorized_keys
+cp /home/root/.ssh/authorized_keys  /home/$USER_NAME/.ssh/authorized_keys
 chown -R $USER_NAME:$USER_NAME /home/$USER_NAME/
 chmod 640 /home/$USER_NAME/.ssh/authorized_keys
 
